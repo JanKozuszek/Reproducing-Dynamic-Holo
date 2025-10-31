@@ -7,6 +7,10 @@ function Power(x,y)
     return(x^y)
 end
 
+function NothingBurger()
+    return 0
+end
+
 function Cosh(x)
     return cosh(x)
 end
