@@ -21,6 +21,7 @@ end;
 
 function chebmat(grid::AbstractVector{BigFloat})
     # Compute a differentiation matrix given a (Chebyshev) grid
+    # Formula copied from the Trefethen book
 
     N = length(grid);
     Dmat = zeros(T, N, N);
@@ -53,6 +54,8 @@ function cheb(start, stop, length)
 end;
 
 function MultiGridChebyshev(start, stop, Ndom, Npts)
+    #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
+    
     allmats = zeros(T,Ndom,Npts,Npts);
     allmats2 = zeros(T,Ndom,Npts,Npts);
     grid = zeros(T, Ndom * Npts);

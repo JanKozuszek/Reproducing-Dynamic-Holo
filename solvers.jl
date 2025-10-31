@@ -3,12 +3,18 @@
 # We need the top couple of functions due to how Mathematica's CForm treats functions, e.g. x^y gets exported as Power(x,y).
 # The data needed at the start of a timestep: a profile for Φ (which includes ϕ_2), values for a_4 and ξ.
 
+import LinearAlgebra as linalg
+import Plots as plt
+import Polynomials as poly
+import NonlinearSolve as nonlin
+
+using Format
+using .Threads
+using ProgressMeter
+
+
 function Power(x,y)
     return(x^y)
-end
-
-function NothingBurger()
-    return 0
 end
 
 function Cosh(x)
@@ -251,6 +257,7 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
 end
 
 function UnSubSdot(SdotSub, X, z, t) 
+    #Computes Sdot given SdotTilde at a point
     LN = -log(z);
 
     sd0 = DS0(t)/2;
@@ -266,6 +273,8 @@ function UnSubSdot(SdotSub, X, z, t)
 end
 
 function CorrectXi(Var, X, t, margin::Int64 = 10)
+    # One step in the procedure to fix ξ such that the apparent horizon is at zAH
+    # Needs to be iterated over
     Xnew = copy(T(X));
 
     z = grid[margin];
@@ -327,6 +336,7 @@ function PlotSdot(Var, X, t,margin::Int64 = 10)
 end;
 
 function ComputeBulk(PhiArr,X,a4,t)
+    # PhiTilde, ξ and a_4 together determine all data on a given time slice. This just computes it.
     localVar = zeros(T, NVar, N);
     localVar[1,1:N] = copy(PhiArr);
 
@@ -338,6 +348,10 @@ function ComputeBulk(PhiArr,X,a4,t)
 end
 
 function TimeDer(Var,X,t, margin)
+    #Compute the time derivatives of PhiTilde, ξ and a_4. 
+    #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
+    #Now solved by the use of polynomial interpolation. The degree of the interpolant is completely arbitrary - lots of space for experimentation
+    #But setting deg = N is bad.
     p2 = Var[1,1];
     a4 = Var[5,1];
     deg = 10;
@@ -414,14 +428,19 @@ function TimeDer(Var,X,t, margin)
         PhiT[ii] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t);
     end
 
+    #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
+
     tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
     PhiT[1] = tempfun(grid[1]);
 
-    #= Finally compute a4'(t) using the explicit formula  =#
+    # Finally compute a4'(t) using the explicit formula  
 
     a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1], t);
     return XPrime, PhiT, a4Prime;
 end;
+
+#DIFFERENT TIME INTEGRATORS:
+#'margin' is not currently used, I will get rid of it at some point.
 
 function RK4(Var,X,a4, t,dt, margin)
     Var0 = copy(Var);
@@ -499,7 +518,6 @@ function RK2(Var, X, a4, t, dt, margin)
 
     return VarNew, XNew, a4New
 end
-
 
 function ForwardEuler(Var,X,a4, t,dt, margin)
     Var0 = copy(Var);
@@ -621,8 +639,9 @@ function AdjustGauge(Var,X,t)
     return NewVar, NewX
 end
 
-
 function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_arr, out_monitor)
+    #The full time evolution function
+    #Currently set up to use AB4 but can be changed
 
     OldTimeDer = [];
     time = inittime;
