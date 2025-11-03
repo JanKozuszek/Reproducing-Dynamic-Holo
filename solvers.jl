@@ -7,6 +7,7 @@ import LinearAlgebra as linalg
 import Plots as plt
 import Polynomials as poly
 import NonlinearSolve as nonlin
+import LsqFit as lsq
 
 using Format
 using .Threads
@@ -27,6 +28,14 @@ end
 
 function Sqrt(x)
     return sqrt(x)
+end
+
+function Tanh(x)
+    return tanh(x)
+end
+
+function Sinh(x)
+    return sinh(x)
 end
 
 function Unroll(arr)
@@ -77,7 +86,8 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
     varnamelist = ["S","Sdot","Phidot","A"];
     degree = degreelist[EqNum];
     VarZ, VarZZ = ComputeDerivatives(Var);
-    p2 = Var[1,1];
+
+    p2 = BoundaryInterpolate(Var[1,:])[1];
     sol = zeros(T,N);
     solParticular = zeros(T,Ndom,Npts);
     solHomogeneous = zeros(T,Ndom,Npts);
@@ -352,9 +362,9 @@ function TimeDer(Var,X,t, margin)
     #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
     #Now solved by the use of polynomial interpolation. The degree of the interpolant is completely arbitrary - lots of space for experimentation
     #But setting deg = N is bad.
-    p2 = Var[1,1];
-    a4 = Var[5,1];
-    deg = 10;
+    p2 = BoundaryInterpolate(Var[1,:])[1];
+    a4 = BoundaryInterpolate(Var[5,:])[1];
+    deg = 30;
     PhiT = zeros(T,N);
 
     #= Begin by computing ξ'(t) at z = zAH by demanding that the horizon stay at fixed z. =#
@@ -429,9 +439,12 @@ function TimeDer(Var,X,t, margin)
     end
 
     #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
+    #CHANGE - now including log terms in near boundary interpolation. 
 
-    tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
-    PhiT[1] = tempfun(grid[1]);
+    PhiT[1] = BoundaryInterpolate(PhiT)[1];
+
+    # tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
+    # PhiT[1] = tempfun(grid[1]);
 
     # Finally compute a4'(t) using the explicit formula  
 
@@ -643,7 +656,8 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
 
-    OldTimeDer = [];
+    OldTimeDer = []; #For the AB4 integrator, need 3 past values
+    OldSdot = []; #For monitoring the constraint, need 4 past values
     time = inittime;
 
     VarOld = copy(initVar);
@@ -655,6 +669,7 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
 
     push!(out_arr,[inittime, XOld, a4Old, VarOld]);
     push!(out_monitor, [Eps,Mom,Op];)
+    push!(OldSdot,VarOld[3,:])
 
     counter = 0;
 
@@ -662,15 +677,17 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
 
     #First couple of steps to set up later AB4
     for ii in 1:3
-        push!(OldTimeDer, TimeDer(VarOld, XOld, time, 10));
 
         VarOld, XOld, a4Old = RK4(VarOld, XOld, a4Old, time, dt, 0);
 
         time = time+dt;
         counter += 1; 
 
+        push!(OldTimeDer, TimeDer(VarOld, XOld, time, 10));
+        push!(OldSdot,VarOld[3,:])
+
         testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
-        next!(prog, desc = string("t = ",format(time, precision=3),",  Sdot at zAH = ", format(testsdot, precision=3)))
+        next!(prog, desc = string("t = ",format(time, precision=3)#=,",  Sdot at zAH = ", format(testsdot, precision=3)=#))
 
         if counter == write_out
             Eps, Mom, Op = Monitor(VarOld, time, XOld)
@@ -696,7 +713,7 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
         #     testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
         # end
 
-        next!(prog, desc = string("time = ",format(time, precision=3),", Sdot at zAH = ", format(testsdot, precision=5))) 
+        next!(prog, desc = string("time = ",format(time, precision=3)#=,",  Sdot at zAH = ", format(testsdot, precision=3)=#)) 
 
     
         if counter == write_out
@@ -709,7 +726,44 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     end
 end
 
+function BoundaryInterpolate(VarVec)
+    # Take the near - boundary points in the given variable and fit a model, including some logarithmic terms, to extract the FG expansion coefficients
+    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z) .* z .^2 .+ p[6] .* log.(z) .* z .^3;
 
+    zdata = grid[2:7];
+    ydata = VarVec[2:7];
+
+    p0 = [VarVec[2], 0., 0., 0. , 0., 0.];
+    fit = lsq.curve_fit(model, zdata, ydata, p0);
+    params = lsq.coef(fit);
+    return params
+end
+
+function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
+    res = (3*a4 - 16*a3 + 36*a2 - 48*a1 + 25*a0) / (12 * dt);
+    return res
+end
+
+function EvaluateConstraint(Var, X, previous_sdot_arr, previous_x_arr, t, dt)
+    VarZ, VarZZ = ComputeDerivatives(Var);
+    res = zeros(T,N);
+    p2 = BoundaryInterpolate(Var[1,:])[1];
+    a4 = BoundaryInterpolate(Var[5,:])[1];
+        
+    XPrime = BackwardsTimeDerivative(previous_x_arr[1],previous_x_arr[2],previous_x_arr[3],previous_x_arr[4],X,dt)
+
+    for ii in 1:N
+        Phi, S, Sdot, Phidot, A = Var[1:NVar,ii];
+        PhiZ, SZ, SdotZ, PhidotZ, AZ = VarZ[1:NVar,ii]
+        PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = VarZZ[1:NVar,ii];
+        z = grid[ii]; LN = -T(log(z));
+        SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][ii],previous_sdot_arr[2][ii],previous_sdot_arr[3][ii],previous_sdot_arr[4][ii],Var[3,ii],dt);
+
+        res[ii] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT);
+    end
+
+    return res
+end
 # function ComputeEquation(Var, EqNum, a4, X)
 
 #     VarZ, VarZZ = ComputeDerivatives(Var);
