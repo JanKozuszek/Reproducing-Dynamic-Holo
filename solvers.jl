@@ -668,7 +668,7 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
 
 
     push!(out_arr,[inittime, XCurrent, a4Current, VarCurrent]);
-    push!(out_monitor, [Eps,Mom,Op];)
+    push!(out_monitor, [Eps,Mom,Op,T(0.)];)
     push!(OldSdot,VarCurrent[3,:])
     push!(OldXarr,XCurrent);
 
