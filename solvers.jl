@@ -79,6 +79,11 @@ end
 
 
 function LinearSolveODE(Var, EqNum, a4, X, t)
+    #NOTE TO SELF: FIGURE OUT HOW TO DEAL WITH STUFF NEAR THE origin
+    #last time, moved zmin to zero, but that means we can't evaluate mat there for the regular singular points.
+    #How could we extend it there? Is that even necessary?
+
+
     # Solve an ODE by direct linear inversion. Grid is subdivided into Ndom domains of Npts each.
     # This is a very complicated function. Maybe better split into bits.
     degreelist = [2,1,1,2];
@@ -125,16 +130,17 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
             z = grid[fullind]; LN = -log(z);
 
             #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
-            if fullind == 1 && EqNum == 2
-                srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
-                # srcPrescribed = ((18*a4 - 5*Power(M,4) + 18*M*p2 - 18*Power(M,2)*Power(X,2))/36.)
+            if fullind == 1
+                if EqNum == 2
+                    srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
+                    # srcPrescribed = ((18*a4 - 5*Power(M,4) + 18*M*p2 - 18*Power(M,2)*Power(X,2))/36.)
+                elseif EqNum == 4
+                    srcPrescribed = a4;
+                end
+                #Don't evaluate things at z = 0!
                 continue
             end
 
-            if fullind == 1 && EqNum == 4
-                srcPrescribed = a4;
-                continue
-            end
 
             if degree == 2
                 F1Mat[ptind,ptind] = co1_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
@@ -155,6 +161,9 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
         #The homogeneous solution is linearly independent from the particular integral
         #For 2nd order ODEs we need two independent homogeneous solutions - second one ensures we can also have derivative continuity!
 
+
+        mat[1,2:Npts] = zeros(T, Npts-1);
+        mat[1,1] = 1;
         
 
         if domind > 1 || !regBC[EqNum]
@@ -168,14 +177,13 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
                 solHomogeneous2[domind,:] = mat2 \ SRCVec2;
             end
 
-            mat[1,2:Npts] = zeros(T, Npts-1);
-            mat[1,1] = 1;
             SRCVec[1] = 0; 
             solHomogeneous[domind,:] = mat \ HomoSRCVec;
             solParticular[domind,:] = mat \ SRCVec;
 
 
         else #First domain, and a regular singular point at z = 0: we only need one solution here.
+            SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
             solHomogeneous[domind,:] = zeros(T, Npts);
             solParticular[domind,:] = mat \ SRCVec;
         end
