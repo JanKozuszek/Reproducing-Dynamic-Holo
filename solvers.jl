@@ -597,18 +597,18 @@ function AB4(Var,X,a4, t,dt, OldTimeDer)
 
     k0X, k0Phi, k0a4 = TimeDer(Var0, X0,t,margin);
 
-    k1X, k1Phi, k1a4 = OldF[1];
+    k1X, k1Phi, k1a4 = OldF[3];
     k2X, k2Phi, k2a4 = OldF[2];
-    k3X, k3Phi, k3a4 = OldF[3];
+    k3X, k3Phi, k3a4 = OldF[1];
 
     kX = dt * (55 * k0X - 59 * k1X + 37 * k2X - 9 * k3X) / 24;
     kPhi = dt * (55 * k0Phi - 59 * k1Phi + 37 * k2Phi - 9 * k3Phi) / 24;
     ka4 = dt * (55 * k0a4 - 59 * k1a4 + 37 * k2a4 - 9 * k3a4) / 24;
 
 
-    OldTimeDer[1] = [k0X, k0Phi, k0a4];
-    OldTimeDer[2] = OldF[1];
-    OldTimeDer[3] = OldF[2];
+    OldTimeDer[3] = [k0X, k0Phi, k0a4];
+    OldTimeDer[2] = OldF[3];
+    OldTimeDer[1] = OldF[2];
 
     XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4;
 
@@ -657,19 +657,20 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     #Currently set up to use AB4 but can be changed
 
     OldTimeDer = []; #For the AB4 integrator, need 3 past values
-    OldSdot = []; #For monitoring the constraint, need 4 past values
+    OldSdot = []; OldXarr = [];#For monitoring the constraint, need 4 past values
     time = inittime;
 
-    VarOld = copy(initVar);
-    XOld = copy(initX);
-    a4Old = copy(inita4);
+    VarCurrent = copy(initVar);
+    XCurrent = copy(initX);
+    a4Current = copy(inita4);
 
-    Eps, Mom, Op = Monitor(VarOld,time, XOld);
+    Eps, Mom, Op = Monitor(VarCurrent,time, XCurrent);
 
 
-    push!(out_arr,[inittime, XOld, a4Old, VarOld]);
+    push!(out_arr,[inittime, XCurrent, a4Current, VarCurrent]);
     push!(out_monitor, [Eps,Mom,Op];)
-    push!(OldSdot,VarOld[3,:])
+    push!(OldSdot,VarCurrent[3,:])
+    push!(OldXarr,XCurrent);
 
     counter = 0;
 
@@ -678,22 +679,23 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     #First couple of steps to set up later AB4
     for ii in 1:3
 
-        VarOld, XOld, a4Old = RK4(VarOld, XOld, a4Old, time, dt, 0);
+        VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, 0);
 
         time = time+dt;
         counter += 1; 
 
-        push!(OldTimeDer, TimeDer(VarOld, XOld, time, 10));
-        push!(OldSdot,VarOld[3,:])
+        push!(OldTimeDer, TimeDer(VarCurrent, XCurrent, time, 10));
+        push!(OldSdot,VarCurrent[3,:])
+        push!(OldXarr,XCurrent);
 
-        testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
+        # testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
         next!(prog, desc = string("t = ",format(time, precision=3)#=,",  Sdot at zAH = ", format(testsdot, precision=3)=#))
 
         if counter == write_out
-            Eps, Mom, Op = Monitor(VarOld, time, XOld)
+            Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
 
-            push!(out_arr,[time, XOld, a4Old, VarOld]);
-            push!(out_monitor, [Eps,Mom,Op];)
+            push!(out_arr,[time, XCurrent, a4Current, VarCurrent]);
+            push!(out_monitor, [Eps,Mom,Op,T(0.)];)
             counter = 0;
         end
 
@@ -701,26 +703,29 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
 
     while time<maxtime
 
-        VarOld, XOld, a4Old = AB4(VarOld, XOld, a4Old, time, dt, OldTimeDer);
+        VarCurrent, XCurrent, a4Current = AB4(VarCurrent, XCurrent, a4Current, time, dt, OldTimeDer);
 
         time = time+dt;
         counter += 1; 
 
-        testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
+        constr_arr = EvaluateConstraint(VarCurrent,XCurrent,OldSdot,OldXarr,time,dt);
+        constr_norm = linalg.norm(constr_arr);
+
+        # testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
 
         # if abs(testsdot)>.00004
         #     VarOld, XOld = AdjustGauge(VarOld,XOld,time);
         #     testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
         # end
 
-        next!(prog, desc = string("time = ",format(time, precision=3)#=,",  Sdot at zAH = ", format(testsdot, precision=3)=#)) 
+        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
 
     
         if counter == write_out
-            Eps, Mom, Op = Monitor(VarOld, time, XOld)
+            Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
 
-            push!(out_arr,[time, XOld, a4Old, VarOld]);
-            push!(out_monitor, [Eps,Mom,Op];)
+            push!(out_arr,[time, XCurrent, a4Current, VarCurrent]);
+            push!(out_monitor, [Eps,Mom,Op,constr_norm];)
             counter = 0;
         end
     end
@@ -744,7 +749,10 @@ function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
     return res
 end
 
-function EvaluateConstraint(Var, X, previous_sdot_arr, previous_x_arr, t, dt)
+function EvaluateConstraint(Var, X, previous_sdot_arr_arg, previous_x_arr_arg, t, dt)
+    previous_x_arr = copy(previous_x_arr_arg);
+    previous_sdot_arr = copy(previous_sdot_arr_arg);
+
     VarZ, VarZZ = ComputeDerivatives(Var);
     res = zeros(T,N);
     p2 = BoundaryInterpolate(Var[1,:])[1];
@@ -752,7 +760,7 @@ function EvaluateConstraint(Var, X, previous_sdot_arr, previous_x_arr, t, dt)
         
     XPrime = BackwardsTimeDerivative(previous_x_arr[1],previous_x_arr[2],previous_x_arr[3],previous_x_arr[4],X,dt)
 
-    for ii in 1:N
+    for ii in 2:N
         Phi, S, Sdot, Phidot, A = Var[1:NVar,ii];
         PhiZ, SZ, SdotZ, PhidotZ, AZ = VarZ[1:NVar,ii]
         PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = VarZZ[1:NVar,ii];
@@ -761,6 +769,18 @@ function EvaluateConstraint(Var, X, previous_sdot_arr, previous_x_arr, t, dt)
 
         res[ii] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT);
     end
+
+    res[1] = BoundaryInterpolate(res)[1];
+
+    previous_sdot_arr_arg[1] = previous_sdot_arr[2];
+    previous_sdot_arr_arg[2] = previous_sdot_arr[3];
+    previous_sdot_arr_arg[3] = previous_sdot_arr[4];
+    previous_sdot_arr_arg[4] = Var[3,:];
+
+    previous_x_arr_arg[1] = previous_x_arr[2];
+    previous_x_arr_arg[2] = previous_x_arr[3];
+    previous_x_arr_arg[3] = previous_x_arr[4];
+    previous_x_arr_arg[4] = X;
 
     return res
 end
