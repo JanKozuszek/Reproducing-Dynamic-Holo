@@ -19,7 +19,7 @@ function chebgrid(start, stop, length)
 
 end;
 
-function chebmat(grid::AbstractVector{BigFloat})
+function chebmat(grid::AbstractVector{T})
     # Compute a differentiation matrix given a (Chebyshev) grid
     # Formula copied from the Trefethen book
 

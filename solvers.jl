@@ -3,6 +3,33 @@
 # We need the top couple of functions due to how Mathematica's CForm treats functions, e.g. x^y gets exported as Power(x,y).
 # The data needed at the start of a timestep: a profile for Φ (which includes ϕ_2), values for a_4 and ξ.
 
+function_map = Dict(
+    "S" => Dict(
+        :Coeff0 => SCoeff0,
+        :Coeff1 => SCoeff1,
+        :Coeff2 => SCoeff2,
+        :Src    => SSrc
+    ),
+    "Sdot" => Dict(
+        :Coeff0 => SdotCoeff0,
+        :Coeff1 => SdotCoeff1,
+        :Coeff2 => SdotCoeff2,
+        :Src    => SdotSrc
+    ),
+    "Phidot" => Dict(
+        :Coeff0 => PhidotCoeff0,
+        :Coeff1 => PhidotCoeff1,
+        :Coeff2 => PhidotCoeff2,
+        :Src    => PhidotSrc
+    ),
+    "A" => Dict(
+        :Coeff0 => ACoeff0,
+        :Coeff1 => ACoeff1,
+        :Coeff2 => ACoeff2,
+        :Src    => ASrc
+    )
+);
+
 import LinearAlgebra as linalg
 import Plots as plt
 import Polynomials as poly
@@ -77,125 +104,85 @@ function ComputeSingleDerivative(Vec)
     
 end
 
+function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
+    #Compute the matrix for one of the ODEs, so that it can be written as mat * vec = src.
+    #Not dealing with boundary conditions here.
 
-function LinearSolveODE(Var, EqNum, a4, X, t)
-    #NOTE TO SELF: FIGURE OUT HOW TO DEAL WITH STUFF NEAR THE origin
-    #last time, moved zmin to zero, but that means we can't evaluate mat there for the regular singular points.
-    #How could we extend it there? Is that even necessary?
-
-
-    # Solve an ODE by direct linear inversion. Grid is subdivided into Ndom domains of Npts each.
-    # This is a very complicated function. Maybe better split into bits.
-    degreelist = [2,1,1,2];
-    regBC = [true, false, true, false];
+    degree = [2,1,1,2][EqNum];
     varnamelist = ["S","Sdot","Phidot","A"];
-    degree = degreelist[EqNum];
-    VarZ, VarZZ = ComputeDerivatives(Var);
+    srcPrescribed = zero(T);
 
-    p2 = BoundaryInterpolate(Var[1,:])[1];
-    sol = zeros(T,N);
-    solParticular = zeros(T,Ndom,Npts);
-    solHomogeneous = zeros(T,Ndom,Npts);
-    srcPrescribed = T(0.);
+
+    var = varnamelist[EqNum]
 
     if degree == 2
-        solHomogeneous2 = zeros(T,Ndom,Npts);
-
-        co1_functionName = string(varnamelist[EqNum],"Coeff1");
-        co1_function = getfield(Main, Symbol(co1_functionName));
+        co2_function = function_map[var][:Coeff2]
     end
 
-    co0_functionName = string(varnamelist[EqNum],"Coeff0");
-    co0_function = getfield(Main, Symbol(co0_functionName));
-
-    src_functionName = string(varnamelist[EqNum],"Src");
-    src_function = getfield(Main, Symbol(src_functionName));
-
-    #Basic parallelization here:
-    Threads.@threads for domind in 1:Ndom
-
-        if degree == 2
-            F1Mat = zeros(T,Npts,Npts);
-        end
-        F0Mat = zeros(T,Npts,Npts);
-        SRCVec = zeros(T,Npts);
-        HomoSRCVec = zeros(T, Npts);
-        HomoSRCVec[1] = 1;
-
-        for ptind in 1:Npts
-            fullind = (domind - 1)*Npts + ptind;
-            Phi, S, Sdot, Phidot, A = Var[1:NVar,fullind];
-            PhiZ, SZ, SdotZ, PhidotZ, AZ = VarZ[1:NVar,fullind]
-            PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = VarZZ[1:NVar,fullind];
-            z = grid[fullind]; LN = -log(z);
-
-            #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
-            if fullind == 1
-                if EqNum == 2
-                    srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
-                    # srcPrescribed = ((18*a4 - 5*Power(M,4) + 18*M*p2 - 18*Power(M,2)*Power(X,2))/36.)
-                elseif EqNum == 4
-                    srcPrescribed = a4;
-                end
-                #Don't evaluate things at z = 0!
-                continue
-            end
+    co1_function = function_map[var][:Coeff1]
+    co0_function = function_map[var][:Coeff0]
+    src_function = function_map[var][:Src]
 
 
-            if degree == 2
-                F1Mat[ptind,ptind] = co1_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
-            end;
-
-            F0Mat[ptind,ptind] = co0_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
-            SRCVec[ptind] = - src_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
-        end
-
-        if degree == 2
-            mat = DiffMats2[domind,:,:] + F1Mat*DiffMats[domind,:,:] + F0Mat;
-        else
-            mat = DiffMats[domind,:,:] + F0Mat;
-        end
-
-
-        #Now impose boundary conditions on the domains - in general, we will want continuity matching on the LHS
-        #The homogeneous solution is linearly independent from the particular integral
-        #For 2nd order ODEs we need two independent homogeneous solutions - second one ensures we can also have derivative continuity!
-
-
-        mat[1,2:Npts] = zeros(T, Npts-1);
-        mat[1,1] = 1;
-        
-
-        if domind > 1 || !regBC[EqNum]
-
-            if degree == 2 #For 2nd order ODEs we'll generically need another independent homogeneous solution
-                mat2 = copy(mat);
-                SRCVec2 = zeros(T, Npts);
-                SRCVec2[Npts] = 1;
-                mat2[Npts,1:Npts-1] = zeros(T,Npts-1);
-                mat2[Npts,Npts] = 1;
-                solHomogeneous2[domind,:] = mat2 \ SRCVec2;
-            end
-
-            SRCVec[1] = 0; 
-            solHomogeneous[domind,:] = mat \ HomoSRCVec;
-            solParticular[domind,:] = mat \ SRCVec;
-
-
-        else #First domain, and a regular singular point at z = 0: we only need one solution here.
-            SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
-            solHomogeneous[domind,:] = zeros(T, Npts);
-            solParticular[domind,:] = mat \ SRCVec;
-        end
-    end;
-
-    solParticular = Unroll(solParticular);
-    solHomogeneous = Unroll(solHomogeneous);
     if degree == 2
-        solHomogeneous2 = Unroll(solHomogeneous2);
+        F2Vec = zeros(T,Npts);
+    end
+    F1Vec = zeros(T,Npts);
+    F0Vec = zeros(T,Npts);
+    SRCVec = zeros(T,Npts);
+
+    mat = zeros(T,Npts,Npts)
+
+    for ptind in 1:Npts
+        fullind = (domind - 1)*Npts + ptind;
+        Phi, S, Sdot, Phidot, A = Var[1:NVar,fullind];
+        PhiZ, SZ, SdotZ, PhidotZ, AZ = VarZ[1:NVar,fullind]
+        PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = VarZZ[1:NVar,fullind];
+        z = grid[fullind]; 
+
+        LN = (z == 0 ? -log(eps(typeof(z))) : -log(z)); #Don't evalueate log(0)!
+
+        #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
+        if fullind == 1
+            if EqNum == 2
+                srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
+                # srcPrescribed = ((18*a4 - 5*Power(M,4) + 18*M*p2 - 18*Power(M,2)*Power(X,2))/36.)
+            elseif EqNum == 4
+                srcPrescribed = a4;
+            end
+        end
+
+
+        if degree == 2
+            F2Vec[ptind] = co2_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+        end
+
+        F1Vec[ptind] = co1_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+        F0Vec[ptind] = co0_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+        SRCVec[ptind] = - src_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+
     end
 
+    DM1 = @view DiffMats[domind, :, :];   # view, not copy
+    DM2 = (degree==2 ? (@view DiffMats2[domind, :, :]) : nothing);
+
+    if degree == 2
+        mat = F2Vec .* DM2 + F1Vec .* DM1 + linalg.Diagonal(F0Vec);
+    else
+        mat = F1Vec .* DM1  + linalg.Diagonal(F0Vec);
+    end
+
+    if isnan(SRCVec[1])
+        SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
+    end
+    return mat, SRCVec, srcPrescribed
+
+end
+
+function DomainMatching(EqNum, degree, srcPrescribed, solParticular, solHomogeneous, solHomogeneous2)
     #Domain matching. We have 4 possibilities: degree = 1 or 2, regular singular point = true or false. Annoyingly the 4 equations in the system satiate these.
+    sol = zeros(T,N);
+    regBC = [true, false, true, false];
 
     if degree == 1 #In the nth subdomain, the solution is given as y_particular + c_n * y_homogeneous
         coeffMat = zeros(T,Ndom,Ndom);
@@ -270,6 +257,79 @@ function LinearSolveODE(Var, EqNum, a4, X, t)
         end
 
     end
+
+    return sol
+end
+
+function LinearSolveODE(Var, EqNum, a4, X, t)
+    # Solve an ODE by direct linear inversion. Grid is subdivided into Ndom domains of Npts each.
+    # This routine can now handle the case where zmin = 0. But that might still be bad for stability.
+    degreelist = [2,1,1,2];
+    varnamelist = ["S","Sdot","Phidot","A"];
+    regBC = [true, false, true, false];
+    degree = degreelist[EqNum];
+    VarZ, VarZZ = ComputeDerivatives(Var);
+
+    p2 = BoundaryInterpolate(Var[1,:])[1];
+    sol = zeros(T,N);
+    solParticular = zeros(T,Ndom,Npts);
+    solHomogeneous = zeros(T,Ndom,Npts);
+    if degree == 2 
+        solHomogeneous2 = zeros(T,Ndom,Npts);
+    end
+
+    srcPrescribed = zero(T);
+
+    #Basic parallelization here:
+    Threads.@threads for domind in 1:Ndom
+
+        if domind == 1
+            mat, SRCVec, srcPrescribed = ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t);
+        else
+            mat, SRCVec = ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t);
+        end
+
+        HomoSRCVec = zeros(T, Npts);
+        HomoSRCVec[1] = 1;
+        
+        #Now impose boundary conditions on the domains - in general, we will want continuity matching on the LHS
+        #The homogeneous solution is linearly independent from the particular integral
+        #For 2nd order ODEs we need two independent homogeneous solutions - second one ensures we can also have derivative continuity!        
+
+        if domind > 1 || !regBC[EqNum]
+
+            if degree == 2 #For 2nd order ODEs we'll generically need another independent homogeneous solution
+                mat2 = copy(mat);
+                SRCVec2 = zeros(T, Npts);
+                SRCVec2[Npts] = 1;
+                mat2[Npts,1:Npts-1] = zeros(T,Npts-1);
+                mat2[Npts,Npts] = 1;
+                solHomogeneous2[domind,:] = mat2 \ SRCVec2;
+            end
+
+            SRCVec[1] = 0; 
+            mat[1,2:Npts] = zeros(T, Npts-1);
+            mat[1,1] = 1;
+
+            lumat = linalg.lu(mat);
+            solHomogeneous[domind,:] = lumat \ HomoSRCVec;
+            solParticular[domind,:] = lumat \ SRCVec;
+
+
+        else #First domain, and a regular singular point at z = 0: we only need one solution here.
+            # SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
+            solHomogeneous[domind,:] = zeros(T, Npts);
+            solParticular[domind,:] = mat \ SRCVec;
+        end
+    end;
+
+    solParticular = Unroll(solParticular);
+    solHomogeneous = Unroll(solHomogeneous);
+    if degree == 2
+        solHomogeneous2 = Unroll(solHomogeneous2);
+    end
+
+    sol = (degree == 1 ? DomainMatching(EqNum,degree,srcPrescribed,solParticular,solHomogeneous,nothing) : DomainMatching(EqNum,degree,srcPrescribed,solParticular,solHomogeneous,solHomogeneous2))
 
     return sol
 end
@@ -712,6 +772,7 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     while time<maxtime
 
         VarCurrent, XCurrent, a4Current = AB4(VarCurrent, XCurrent, a4Current, time, dt, OldTimeDer);
+        #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
 
         time = time+dt;
         counter += 1; 
