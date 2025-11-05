@@ -720,7 +720,7 @@ function AdjustGauge(Var,X,t)
     return NewVar, NewX
 end
 
-function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_arr, out_monitor)
+function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_io, monitor_io)
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
 
@@ -735,8 +735,11 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
     Eps, Mom, Op = Monitor(VarCurrent,time, XCurrent);
 
 
-    push!(out_arr,[inittime, XCurrent, a4Current, VarCurrent]);
-    push!(out_monitor, [Eps,Mom,Op,T(0.)];)
+    out_data = Float64.(VarCurrent);
+    out_monit = vcat(Float64(inittime), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
+    write(out_io,out_data);
+    write(monitor_io, out_monit);
+
     push!(OldSdot,VarCurrent[3,:])
     push!(OldXarr,XCurrent);
 
@@ -762,8 +765,11 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
         if counter == write_out
             Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
 
-            push!(out_arr,[time, XCurrent, a4Current, VarCurrent]);
-            push!(out_monitor, [Eps,Mom,Op,T(0.)];)
+            out_data = Float64.(VarCurrent);
+            out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
+            write(out_io,out_data);
+            write(monitor_io, out_monit);
+
             counter = 0;
         end
 
@@ -793,11 +799,19 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_ar
         if counter == write_out
             Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
 
-            push!(out_arr,[time, XCurrent, a4Current, VarCurrent]);
-            push!(out_monitor, [Eps,Mom,Op,constr_norm];)
+            out_data = Float64.(VarCurrent);
+            out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
+            write(out_io,out_data);
+            write(monitor_io, out_monit);
+
+            flush(out_io);
+            flush(monitor_io);
+
             counter = 0;
         end
     end
+
+    return VarCurrent, XCurrent, a4Current;
 end
 
 function BoundaryInterpolate(VarVec)
