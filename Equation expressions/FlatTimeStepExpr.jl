@@ -1,4 +1,4 @@
-function DtX(S, Sdot,SdotZ, Phidot, A, AZ, z, LN, X, p2, t)
+function DtX(S,SZ, Sdot,SdotZ, Phidot, A, AZ, z, LN, X, p2, t)
 
 XPrime = (Power(z,2)*(2*Power(M,4) + 72*Sdot - 9*AZ*z + 18*SdotZ*z - 2*Power(M,4)*X*z + 108*Sdot*X*z - 6*Power(M,2)*S*Power(z,2) - 24*Power(M,2)*Sdot*Power(z,2) - 18*AZ*X*Power(z,2) + 36*SdotZ*X*Power(z,2) + 36*Sdot*Power(X,2)*Power(z,2) + 3*AZ*Power(M,2)*Power(z,3) - 12*Power(M,2)*SdotZ*Power(z,3) - 9*AZ*Power(X,2)*Power(z,3) + 18*SdotZ*Power(X,2)*Power(z,3) - 18*AZ*Sdot*Power(z,5) + 6*A*(-6 - 9*X*z + Power(M,2)*Power(z,2) - 3*Power(X,2)*Power(z,2) + 3*SdotZ*Power(z,5)) + 8*M*Phidot*(3 - Power(M,2)*Power(z,2) + 3*S*Power(z,4) + X*z*(3 + Power(M,2)*Power(z,2))) - 8*Power(Phidot,2)*Power(z,2)*(3 - Power(M,2)*Power(z,2) + 3*S*Power(z,4) + X*z*(3 + Power(M,2)*Power(z,2)))))/(36. *(-1 - X*z + 2*Sdot*Power(z,4) + SdotZ*Power(z,5)));
 

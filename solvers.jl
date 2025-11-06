@@ -107,6 +107,9 @@ end
 function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
     #Compute the matrix for one of the ODEs, so that it can be written as mat * vec = src.
     #Not dealing with boundary conditions here.
+    if !(@isdefined scaled)
+        scaled = false
+    end
 
     degree = [2,1,1,2][EqNum];
     varnamelist = ["S","Sdot","Phidot","A"];
@@ -145,8 +148,11 @@ function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
         #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
         if fullind == 1
             if EqNum == 2
-                srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
-                # srcPrescribed = ((18*a4 - 5*Power(M,4) + 18*M*p2 - 18*Power(M,2)*Power(X,2))/36.)
+                if(!scaled)
+                    srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
+                else
+                    srcPrescribed = (a4*DS0(t))/2. - (Power(H,2)*Power(M,2)*DS0(t))/8. - (5*Power(M,4)*DS0(t))/36. + (M*p2*DS0(t))/2. - (H*Power(M,2)*X*DS0(t))/9. - (Power(M,2)*Power(X,2)*DS0(t))/2. - (13*H*Power(M,2)*DS1(t))/36. + (2*Power(M,2)*X*DS1(t))/9. + (3*Power(M,2)*Power(DS1(t),2))/(16. *DS0(t)) - (61*Power(M,2)*DS2(t))/144.;
+                end
             elseif EqNum == 4
                 srcPrescribed = a4;
             end
@@ -454,6 +460,7 @@ function TimeDer(Var,X,t, margin)
     Afun = poly.fit(subgrid, subAArr, deg);
 
     PhiZfun = poly.derivative(Phifun);
+    SZfun = poly.derivative(Sfun);
     SdotZfun = poly.derivative(Sdotfun);
     AZfun = poly.derivative(Afun);
 
@@ -465,13 +472,14 @@ function TimeDer(Var,X,t, margin)
     # AZ = VarZ[5,end];
 
     S = Sfun(zAH);
+    SZ = SZfun(zAH);
     Sdot = Sdotfun(zAH);
     SdotZ = SdotZfun(zAH);
     Phidot = Phidotfun(zAH);
     A = Afun(zAH);
     AZ = AZfun(zAH);
 
-    XPrime = DtX(S, Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2, t);
+    XPrime = DtX(S, SZ,Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2, t);
 
 
     #= Now compute ∂_t Φ using the definition of Φdot =#

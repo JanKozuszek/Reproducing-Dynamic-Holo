@@ -1,0 +1,433 @@
+{Subscript[a, 0][t] -> 1, Subscript[a, 1][t] -> 2*\[Xi][t], 
+ Subscript[s, 0][t] -> S0[t], Subscript[p, 0][t] -> M, 
+ Subscript[\[Alpha]1, 0][t] -> 0, Subscript[\[Alpha]2, 0][t] -> 0, 
+ Subscript[\[Sigma]1, 0][t] -> 0, Subscript[\[Sigma]2, 0][t] -> 0, 
+ Subscript[\[Psi]1, 0][t] -> 0, Subscript[\[Psi]2, 0][t] -> 0, 
+ Subscript[p, 1][t] -> -(M*\[Xi][t]), Subscript[s, 1][t] -> 
+  S0[t]*\[Xi][t] + Derivative[1][S0][t], Subscript[\[Alpha]1, 1][t] -> 0, 
+ Subscript[\[Alpha]2, 1][t] -> 0, Subscript[\[Sigma]1, 1][t] -> 0, 
+ Subscript[\[Sigma]2, 1][t] -> 0, Subscript[\[Psi]1, 1][t] -> 0, 
+ Subscript[\[Psi]2, 1][t] -> 0, Subscript[a, 2][t] -> 
+  (-2*M^2)/3 + \[Xi][t]^2 + Derivative[1][S0][t]^2/S0[t]^2 - 
+   2*Derivative[1][\[Xi]][t] - (2*Derivative[2][S0][t])/S0[t], 
+ Subscript[s, 2][t] -> -1/3*(M^2*S0[t]), Subscript[\[Alpha]1, 2][t] -> 0, 
+ Subscript[\[Alpha]2, 2][t] -> 0, Subscript[\[Sigma]1, 2][t] -> 0, 
+ Subscript[\[Sigma]2, 2][t] -> 0, Subscript[\[Psi]1, 2][t] -> 
+  -1/2*(M*(Derivative[1][S0][t]^2 + S0[t]*Derivative[2][S0][t]))/S0[t]^2, 
+ Subscript[\[Psi]2, 2][t] -> 0, Subscript[a, 3][t] -> 0, 
+ Subscript[p, 3][t] -> -1/6*(-12*M*S0[t]^3*\[Xi][t]^3 + 
+     18*S0[t]^3*\[Xi][t]*Subscript[p, 2][t] + 3*M*S0[t]*\[Xi][t]*
+      Derivative[1][S0][t]^2 + 2*M*Derivative[1][S0][t]^3 + 
+     12*M*S0[t]^3*\[Xi][t]*Derivative[1][\[Xi]][t] - 
+     6*S0[t]^3*Derivative[1][Subscript[p, 2]][t] + 3*M*S0[t]^2*\[Xi][t]*
+      Derivative[2][S0][t] - 4*M*S0[t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] + 2*M*S0[t]^2*Derivative[3][S0][t])/S0[t]^3, 
+ Subscript[s, 3][t] -> (3*M^2*S0[t]*\[Xi][t] - M^2*Derivative[1][S0][t])/9, 
+ Subscript[\[Alpha]1, 3][t] -> 0, Subscript[\[Alpha]2, 3][t] -> 0, 
+ Subscript[\[Sigma]1, 3][t] -> 0, Subscript[\[Sigma]2, 3][t] -> 0, 
+ Subscript[\[Psi]1, 3][t] -> 
+  -1/2*(-3*M*S0[t]*\[Xi][t]*Derivative[1][S0][t]^2 - 
+     2*M*Derivative[1][S0][t]^3 - 3*M*S0[t]^2*\[Xi][t]*Derivative[2][S0][t] + 
+     M*S0[t]*Derivative[1][S0][t]*Derivative[2][S0][t] + 
+     M*S0[t]^2*Derivative[3][S0][t])/S0[t]^3, Subscript[\[Psi]2, 3][t] -> 0, 
+ Subscript[p, 4][t] -> -1/8*(M*Subscript[a, 4][t]) - 
+   (29*M^5*S0[t]^4 + 1152*M^3*S0[t]^4*\[Xi][t]^2 + 
+     5760*M*S0[t]^4*\[Xi][t]^4 - 1152*M^2*S0[t]^4*Subscript[p, 2][t] - 
+     6912*S0[t]^4*\[Xi][t]^2*Subscript[p, 2][t] - 
+     192*M^3*S0[t]^2*Derivative[1][S0][t]^2 - 2448*M*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^2 + 432*S0[t]^2*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^2 - 2688*M*S0[t]*\[Xi][t]*Derivative[1][S0][t]^3 - 
+     594*M*Derivative[1][S0][t]^4 - 9216*M*S0[t]^4*\[Xi][t]^2*
+      Derivative[1][\[Xi]][t] + 864*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t] + 1440*M*S0[t]^4*Derivative[1][\[Xi]][t]^2 + 
+     4608*S0[t]^4*\[Xi][t]*Derivative[1][Subscript[p, 2]][t] - 
+     432*S0[t]^3*Derivative[1][S0][t]*Derivative[1][Subscript[p, 2]][t] + 
+     552*M^3*S0[t]^3*Derivative[2][S0][t] + 144*M*S0[t]^3*\[Xi][t]^2*
+      Derivative[2][S0][t] - 2160*S0[t]^3*Subscript[p, 2][t]*
+      Derivative[2][S0][t] + 3648*M*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] + 1410*M*S0[t]*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] - 336*M*S0[t]^2*Derivative[2][S0][t]^2 + 
+     1440*M*S0[t]^4*\[Xi][t]*Derivative[2][\[Xi]][t] - 
+     720*S0[t]^4*Derivative[2][Subscript[p, 2]][t] - 
+     960*M*S0[t]^3*\[Xi][t]*Derivative[3][S0][t] - 
+     558*M*S0[t]^2*Derivative[1][S0][t]*Derivative[3][S0][t] + 
+     366*M*S0[t]^3*Derivative[4][S0][t])/(1152*S0[t]^4), 
+ Subscript[s, 4][t] -> 
+  -1/216*(-4*M^4*S0[t]^2 + 72*M*S0[t]^2*Subscript[p, 2][t] - 
+     48*M^2*S0[t]*\[Xi][t]*Derivative[1][S0][t] - 
+     9*M^2*Derivative[1][S0][t]^2 - 9*M^2*S0[t]*Derivative[2][S0][t])/S0[t], 
+ Subscript[\[Alpha]1, 4][t] -> (2*M^2*Derivative[2][S0][t])/(3*S0[t]), 
+ Subscript[\[Alpha]2, 4][t] -> 0, Subscript[\[Sigma]1, 4][t] -> 
+  -1/6*(-(M^2*Derivative[1][S0][t]^2) - M^2*S0[t]*Derivative[2][S0][t])/
+    S0[t], Subscript[\[Sigma]2, 4][t] -> 0, Subscript[\[Psi]1, 4][t] -> 
+  -1/48*(24*M^3*S0[t]^2*Derivative[1][S0][t]^2 + 144*M*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^2 + 192*M*S0[t]*\[Xi][t]*Derivative[1][S0][t]^3 + 
+     63*M*Derivative[1][S0][t]^4 + 28*M^3*S0[t]^3*Derivative[2][S0][t] + 
+     144*M*S0[t]^3*\[Xi][t]^2*Derivative[2][S0][t] - 
+     96*M*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     75*M*S0[t]*Derivative[1][S0][t]^2*Derivative[2][S0][t] + 
+     60*M*S0[t]^2*Derivative[2][S0][t]^2 - 96*M*S0[t]^3*\[Xi][t]*
+      Derivative[3][S0][t] + 9*M*S0[t]^2*Derivative[1][S0][t]*
+      Derivative[3][S0][t] + 15*M*S0[t]^3*Derivative[4][S0][t])/S0[t]^4, 
+ Subscript[\[Psi]2, 4][t] -> 0, Subscript[a, 5][t] -> 
+  -1/108*(216*S0[t]^2*\[Xi][t]*Subscript[a, 4][t] - 
+     32*M^4*S0[t]*Derivative[1][S0][t] - 144*M^2*S0[t]*\[Xi][t]^2*
+      Derivative[1][S0][t] + 216*S0[t]*Subscript[a, 4][t]*
+      Derivative[1][S0][t] + 144*M*S0[t]*Subscript[p, 2][t]*
+      Derivative[1][S0][t] - 144*M^2*S0[t]^2*\[Xi][t]*
+      Derivative[1][\[Xi]][t] + 72*M*S0[t]^2*Derivative[1][Subscript[p, 2]][
+       t] - 72*M^2*S0[t]*\[Xi][t]*Derivative[2][S0][t] - 
+     45*M^2*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     39*M^2*S0[t]*Derivative[3][S0][t])/S0[t]^2, 
+ Subscript[p, 5][t] -> -1/259200*(-32625*M^5*S0[t]^5*\[Xi][t] - 
+     1296000*M^3*S0[t]^5*\[Xi][t]^3 - 2332800*M*S0[t]^5*\[Xi][t]^5 - 
+     162000*M*S0[t]^5*\[Xi][t]*Subscript[a, 4][t] + 
+     1296000*M^2*S0[t]^5*\[Xi][t]*Subscript[p, 2][t] + 
+     2592000*S0[t]^5*\[Xi][t]^3*Subscript[p, 2][t] + 
+     2560*M^5*S0[t]^4*Derivative[1][S0][t] + 11520*M^3*S0[t]^4*\[Xi][t]^2*
+      Derivative[1][S0][t] - 17280*M*S0[t]^4*Subscript[a, 4][t]*
+      Derivative[1][S0][t] - 11520*M^2*S0[t]^4*Subscript[p, 2][t]*
+      Derivative[1][S0][t] + 345600*M^3*S0[t]^3*\[Xi][t]*
+      Derivative[1][S0][t]^2 + 1501200*M*S0[t]^3*\[Xi][t]^3*
+      Derivative[1][S0][t]^2 - 486000*S0[t]^3*\[Xi][t]*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^2 + 120960*M^3*S0[t]^2*Derivative[1][S0][t]^3 + 
+     1965600*M*S0[t]^2*\[Xi][t]^2*Derivative[1][S0][t]^3 + 
+     64800*S0[t]^2*Subscript[p, 2][t]*Derivative[1][S0][t]^3 + 
+     1008450*M*S0[t]*\[Xi][t]*Derivative[1][S0][t]^4 + 
+     111240*M*Derivative[1][S0][t]^5 + 645120*M^3*S0[t]^5*\[Xi][t]*
+      Derivative[1][\[Xi]][t] + 5184000*M*S0[t]^5*\[Xi][t]^3*
+      Derivative[1][\[Xi]][t] - 972000*M*S0[t]^4*\[Xi][t]^2*
+      Derivative[1][S0][t]*Derivative[1][\[Xi]][t] - 
+     561600*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]^2*
+      Derivative[1][\[Xi]][t] - 1620000*M*S0[t]^5*\[Xi][t]*
+      Derivative[1][\[Xi]][t]^2 + 194400*M*S0[t]^4*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t]^2 + 15120*M*S0[t]^5*
+      Derivative[1][Subscript[a, 4]][t] - 322560*M^2*S0[t]^5*
+      Derivative[1][Subscript[p, 2]][t] - 2592000*S0[t]^5*\[Xi][t]^2*
+      Derivative[1][Subscript[p, 2]][t] + 486000*S0[t]^4*\[Xi][t]*
+      Derivative[1][S0][t]*Derivative[1][Subscript[p, 2]][t] + 
+     280800*S0[t]^3*Derivative[1][S0][t]^2*Derivative[1][Subscript[p, 2]][
+       t] - 469800*M^3*S0[t]^4*\[Xi][t]*Derivative[2][S0][t] - 
+     1414800*M*S0[t]^4*\[Xi][t]^3*Derivative[2][S0][t] + 
+     2430000*S0[t]^4*\[Xi][t]*Subscript[p, 2][t]*Derivative[2][S0][t] - 
+     272952*M^3*S0[t]^3*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     2473200*M*S0[t]^3*\[Xi][t]^2*Derivative[1][S0][t]*Derivative[2][S0][t] + 
+     162000*S0[t]^3*Subscript[p, 2][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] - 1991250*M*S0[t]^2*\[Xi][t]*
+      Derivative[1][S0][t]^2*Derivative[2][S0][t] - 
+     181710*M*S0[t]*Derivative[1][S0][t]^3*Derivative[2][S0][t] + 
+     1512000*M*S0[t]^4*\[Xi][t]*Derivative[1][\[Xi]][t]*
+      Derivative[2][S0][t] - 756000*S0[t]^4*Derivative[1][Subscript[p, 2]][t]*
+      Derivative[2][S0][t] + 702000*M*S0[t]^3*\[Xi][t]*
+      Derivative[2][S0][t]^2 - 130140*M*S0[t]^2*Derivative[1][S0][t]*
+      Derivative[2][S0][t]^2 - 1620000*M*S0[t]^5*\[Xi][t]^2*
+      Derivative[2][\[Xi]][t] + 194400*M*S0[t]^4*\[Xi][t]*
+      Derivative[1][S0][t]*Derivative[2][\[Xi]][t] + 
+     453600*M*S0[t]^5*Derivative[1][\[Xi]][t]*Derivative[2][\[Xi]][t] + 
+     810000*S0[t]^5*\[Xi][t]*Derivative[2][Subscript[p, 2]][t] - 
+     97200*S0[t]^4*Derivative[1][S0][t]*Derivative[2][Subscript[p, 2]][t] + 
+     158712*M^3*S0[t]^4*Derivative[3][S0][t] + 507600*M*S0[t]^4*\[Xi][t]^2*
+      Derivative[3][S0][t] - 226800*S0[t]^4*Subscript[p, 2][t]*
+      Derivative[3][S0][t] + 676350*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[3][S0][t] + 110430*M*S0[t]^2*Derivative[1][S0][t]^2*
+      Derivative[3][S0][t] + 112050*M*S0[t]^3*Derivative[2][S0][t]*
+      Derivative[3][S0][t] + 151200*M*S0[t]^5*\[Xi][t]*
+      Derivative[3][\[Xi]][t] - 75600*S0[t]^5*Derivative[3][Subscript[p, 2]][
+       t] - 330750*M*S0[t]^4*\[Xi][t]*Derivative[4][S0][t] - 
+     69660*M*S0[t]^3*Derivative[1][S0][t]*Derivative[4][S0][t] + 
+     47790*M*S0[t]^4*Derivative[5][S0][t])/S0[t]^5, 
+ Subscript[s, 5][t] -> -1/5400*(300*M^4*S0[t]^3*\[Xi][t] + 
+     3600*M^2*S0[t]^3*\[Xi][t]^3 - 5400*M*S0[t]^3*\[Xi][t]*
+      Subscript[p, 2][t] - 20*M^4*S0[t]^2*Derivative[1][S0][t] + 
+     720*M^2*S0[t]^2*\[Xi][t]^2*Derivative[1][S0][t] + 
+     1080*M*S0[t]^2*Subscript[p, 2][t]*Derivative[1][S0][t] - 
+     225*M^2*S0[t]*\[Xi][t]*Derivative[1][S0][t]^2 - 
+     255*M^2*Derivative[1][S0][t]^3 - 2880*M^2*S0[t]^3*\[Xi][t]*
+      Derivative[1][\[Xi]][t] + 1440*M*S0[t]^3*Derivative[1][Subscript[p, 2]][
+       t] - 225*M^2*S0[t]^2*\[Xi][t]*Derivative[2][S0][t] + 
+     753*M^2*S0[t]*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     624*M^2*S0[t]^2*Derivative[3][S0][t])/S0[t]^2, 
+ Subscript[\[Alpha]1, 5][t] -> 
+  -1/3*(4*M^2*S0[t]*\[Xi][t]*Derivative[2][S0][t] + 
+     M^2*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     M^2*S0[t]*Derivative[3][S0][t])/S0[t]^2, Subscript[\[Alpha]2, 5][t] -> 
+  0, Subscript[\[Sigma]1, 5][t] -> 
+  -1/30*(15*M^2*S0[t]*\[Xi][t]*Derivative[1][S0][t]^2 + 
+     5*M^2*Derivative[1][S0][t]^3 + 15*M^2*S0[t]^2*\[Xi][t]*
+      Derivative[2][S0][t] - 7*M^2*S0[t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] - 4*M^2*S0[t]^2*Derivative[3][S0][t])/S0[t]^2, 
+ Subscript[\[Sigma]2, 5][t] -> 0, Subscript[\[Psi]1, 5][t] -> 
+  -1/720*(-1800*M^3*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]^2 - 
+     3600*M*S0[t]^3*\[Xi][t]^3*Derivative[1][S0][t]^2 - 
+     880*M^3*S0[t]^2*Derivative[1][S0][t]^3 - 7200*M*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^3 - 4725*M*S0[t]*\[Xi][t]*Derivative[1][S0][t]^4 - 
+     1020*M*Derivative[1][S0][t]^5 - 2100*M^3*S0[t]^4*\[Xi][t]*
+      Derivative[2][S0][t] - 3600*M*S0[t]^4*\[Xi][t]^3*Derivative[2][S0][t] + 
+     404*M^3*S0[t]^3*Derivative[1][S0][t]*Derivative[2][S0][t] + 
+     3600*M*S0[t]^3*\[Xi][t]^2*Derivative[1][S0][t]*Derivative[2][S0][t] + 
+     5625*M*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]^2*Derivative[2][S0][t] + 
+     1155*M*S0[t]*Derivative[1][S0][t]^3*Derivative[2][S0][t] - 
+     4500*M*S0[t]^3*\[Xi][t]*Derivative[2][S0][t]^2 - 
+     930*M*S0[t]^2*Derivative[1][S0][t]*Derivative[2][S0][t]^2 + 
+     476*M^3*S0[t]^4*Derivative[3][S0][t] + 3600*M*S0[t]^4*\[Xi][t]^2*
+      Derivative[3][S0][t] - 675*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[3][S0][t] - 915*M*S0[t]^2*Derivative[1][S0][t]^2*
+      Derivative[3][S0][t] + 1575*M*S0[t]^3*Derivative[2][S0][t]*
+      Derivative[3][S0][t] - 1125*M*S0[t]^4*\[Xi][t]*Derivative[4][S0][t] + 
+     30*M*S0[t]^3*Derivative[1][S0][t]*Derivative[4][S0][t] + 
+     105*M*S0[t]^4*Derivative[5][S0][t])/S0[t]^5, 
+ Subscript[\[Psi]2, 5][t] -> 0, Subscript[a, 6][t] -> 
+  -1/108000*(7325*M^6*S0[t]^4 + 19200*M^4*S0[t]^4*\[Xi][t]^2 + 
+     43200*M^2*S0[t]^4*\[Xi][t]^4 - 54000*M^2*S0[t]^4*Subscript[a, 4][t] - 
+     324000*S0[t]^4*\[Xi][t]^2*Subscript[a, 4][t] - 
+     19200*M^3*S0[t]^4*Subscript[p, 2][t] - 86400*M*S0[t]^4*\[Xi][t]^2*
+      Subscript[p, 2][t] + 43200*S0[t]^4*Subscript[p, 2][t]^2 + 
+     96000*M^4*S0[t]^3*\[Xi][t]*Derivative[1][S0][t] + 
+     432000*M^2*S0[t]^3*\[Xi][t]^3*Derivative[1][S0][t] - 
+     648000*S0[t]^3*\[Xi][t]*Subscript[a, 4][t]*Derivative[1][S0][t] - 
+     432000*M*S0[t]^3*\[Xi][t]*Subscript[p, 2][t]*Derivative[1][S0][t] + 
+     52320*M^4*S0[t]^2*Derivative[1][S0][t]^2 + 235440*M^2*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^2 - 324000*S0[t]^2*Subscript[a, 4][t]*
+      Derivative[1][S0][t]^2 - 235440*M*S0[t]^2*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^2 - 3726*M^2*Derivative[1][S0][t]^4 + 
+     432000*M^2*S0[t]^4*\[Xi][t]^2*Derivative[1][\[Xi]][t] + 
+     64800*M^2*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t] - 64800*M^2*S0[t]^4*Derivative[1][\[Xi]][t]^2 - 
+     216000*M*S0[t]^4*\[Xi][t]*Derivative[1][Subscript[p, 2]][t] - 
+     32400*M*S0[t]^3*Derivative[1][S0][t]*Derivative[1][Subscript[p, 2]][t] + 
+     120*M^4*S0[t]^3*Derivative[2][S0][t] + 134640*M^2*S0[t]^3*\[Xi][t]^2*
+      Derivative[2][S0][t] + 45360*M*S0[t]^3*Subscript[p, 2][t]*
+      Derivative[2][S0][t] + 171000*M^2*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] + 78318*M^2*S0[t]*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] - 2376*M^2*S0[t]^2*Derivative[2][S0][t]^2 - 
+     64800*M^2*S0[t]^4*\[Xi][t]*Derivative[2][\[Xi]][t] + 
+     32400*M*S0[t]^4*Derivative[2][Subscript[p, 2]][t] + 
+     81000*M^2*S0[t]^3*\[Xi][t]*Derivative[3][S0][t] + 
+     58590*M^2*S0[t]^2*Derivative[1][S0][t]*Derivative[3][S0][t] - 
+     20790*M^2*S0[t]^3*Derivative[4][S0][t])/S0[t]^4, 
+ Subscript[p, 6][t] -> -1/1728000*
+   (37400*M^7*S0[t]^6 + 1994400*M^5*S0[t]^6*\[Xi][t]^2 + 
+     24998400*M^3*S0[t]^6*\[Xi][t]^4 + 24192000*M*S0[t]^6*\[Xi][t]^6 + 
+     144000*M^3*S0[t]^6*Subscript[a, 4][t] + 2592000*M*S0[t]^6*\[Xi][t]^2*
+      Subscript[a, 4][t] - 1341900*M^4*S0[t]^6*Subscript[p, 2][t] - 
+     24076800*M^2*S0[t]^6*\[Xi][t]^2*Subscript[p, 2][t] - 
+     25920000*S0[t]^6*\[Xi][t]^4*Subscript[p, 2][t] + 
+     648000*S0[t]^6*Subscript[a, 4][t]*Subscript[p, 2][t] - 
+     921600*M*S0[t]^6*Subscript[p, 2][t]^2 - 102400*M^5*S0[t]^5*\[Xi][t]*
+      Derivative[1][S0][t] - 460800*M^3*S0[t]^5*\[Xi][t]^3*
+      Derivative[1][S0][t] + 691200*M*S0[t]^5*\[Xi][t]*Subscript[a, 4][t]*
+      Derivative[1][S0][t] + 460800*M^2*S0[t]^5*\[Xi][t]*Subscript[p, 2][t]*
+      Derivative[1][S0][t] - 252585*M^5*S0[t]^4*Derivative[1][S0][t]^2 - 
+     10216320*M^3*S0[t]^4*\[Xi][t]^2*Derivative[1][S0][t]^2 - 
+     22032000*M*S0[t]^4*\[Xi][t]^4*Derivative[1][S0][t]^2 - 
+     10800*M*S0[t]^4*Subscript[a, 4][t]*Derivative[1][S0][t]^2 + 
+     1144320*M^2*S0[t]^4*Subscript[p, 2][t]*Derivative[1][S0][t]^2 + 
+     9720000*S0[t]^4*\[Xi][t]^2*Subscript[p, 2][t]*Derivative[1][S0][t]^2 - 
+     6950400*M^3*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]^3 - 
+     30240000*M*S0[t]^3*\[Xi][t]^3*Derivative[1][S0][t]^3 - 
+     2592000*S0[t]^3*\[Xi][t]*Subscript[p, 2][t]*Derivative[1][S0][t]^3 - 
+     1083392*M^3*S0[t]^2*Derivative[1][S0][t]^4 - 24138000*M*S0[t]^2*
+      \[Xi][t]^2*Derivative[1][S0][t]^4 - 1701000*S0[t]^2*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^4 - 6897600*M*S0[t]*\[Xi][t]*
+      Derivative[1][S0][t]^5 - 279750*M*Derivative[1][S0][t]^6 - 
+     25804800*M^3*S0[t]^6*\[Xi][t]^2*Derivative[1][\[Xi]][t] - 
+     69120000*M*S0[t]^6*\[Xi][t]^4*Derivative[1][\[Xi]][t] + 
+     1843200*M^3*S0[t]^5*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t] + 19440000*M*S0[t]^5*\[Xi][t]^3*
+      Derivative[1][S0][t]*Derivative[1][\[Xi]][t] + 
+     22464000*M*S0[t]^4*\[Xi][t]^2*Derivative[1][S0][t]^2*
+      Derivative[1][\[Xi]][t] + 54000*M*S0[t]^3*\[Xi][t]*
+      Derivative[1][S0][t]^3*Derivative[1][\[Xi]][t] + 
+     3139200*M^3*S0[t]^6*Derivative[1][\[Xi]][t]^2 + 
+     32400000*M*S0[t]^6*\[Xi][t]^2*Derivative[1][\[Xi]][t]^2 - 
+     7776000*M*S0[t]^5*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t]^2 - 3510000*M*S0[t]^4*Derivative[1][S0][t]^2*
+      Derivative[1][\[Xi]][t]^2 - 604800*M*S0[t]^6*\[Xi][t]*
+      Derivative[1][Subscript[a, 4]][t] - 16200*M*S0[t]^5*
+      Derivative[1][S0][t]*Derivative[1][Subscript[a, 4]][t] + 
+     12902400*M^2*S0[t]^6*\[Xi][t]*Derivative[1][Subscript[p, 2]][t] + 
+     34560000*S0[t]^6*\[Xi][t]^3*Derivative[1][Subscript[p, 2]][t] - 
+     921600*M^2*S0[t]^5*Derivative[1][S0][t]*Derivative[1][Subscript[p, 2]][
+       t] - 9720000*S0[t]^5*\[Xi][t]^2*Derivative[1][S0][t]*
+      Derivative[1][Subscript[p, 2]][t] - 11232000*S0[t]^4*\[Xi][t]*
+      Derivative[1][S0][t]^2*Derivative[1][Subscript[p, 2]][t] - 
+     27000*S0[t]^3*Derivative[1][S0][t]^3*Derivative[1][Subscript[p, 2]][t] + 
+     862565*M^5*S0[t]^5*Derivative[2][S0][t] + 11455680*M^3*S0[t]^5*
+      \[Xi][t]^2*Derivative[2][S0][t] + 36288000*M*S0[t]^5*\[Xi][t]^4*
+      Derivative[2][S0][t] + 442800*M*S0[t]^5*Subscript[a, 4][t]*
+      Derivative[2][S0][t] - 4579680*M^2*S0[t]^5*Subscript[p, 2][t]*
+      Derivative[2][S0][t] - 48600000*S0[t]^5*\[Xi][t]^2*Subscript[p, 2][t]*
+      Derivative[2][S0][t] + 11887680*M^3*S0[t]^4*\[Xi][t]*
+      Derivative[1][S0][t]*Derivative[2][S0][t] + 40176000*M*S0[t]^4*
+      \[Xi][t]^3*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     6480000*S0[t]^4*\[Xi][t]*Subscript[p, 2][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] + 2217016*M^3*S0[t]^3*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] + 42444000*M*S0[t]^3*\[Xi][t]^2*
+      Derivative[1][S0][t]^2*Derivative[2][S0][t] + 
+     4131000*S0[t]^3*Subscript[p, 2][t]*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] + 10040400*M*S0[t]^2*\[Xi][t]*
+      Derivative[1][S0][t]^3*Derivative[2][S0][t] - 
+     1285650*M*S0[t]*Derivative[1][S0][t]^4*Derivative[2][S0][t] - 
+     60480000*M*S0[t]^5*\[Xi][t]^2*Derivative[1][\[Xi]][t]*
+      Derivative[2][S0][t] - 2268000*M*S0[t]^4*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t]*Derivative[2][S0][t] + 
+     8316000*M*S0[t]^5*Derivative[1][\[Xi]][t]^2*Derivative[2][S0][t] + 
+     30240000*S0[t]^5*\[Xi][t]*Derivative[1][Subscript[p, 2]][t]*
+      Derivative[2][S0][t] + 1134000*S0[t]^4*Derivative[1][S0][t]*
+      Derivative[1][Subscript[p, 2]][t]*Derivative[2][S0][t] + 
+     548328*M^3*S0[t]^4*Derivative[2][S0][t]^2 - 13770000*M*S0[t]^4*
+      \[Xi][t]^2*Derivative[2][S0][t]^2 - 5670000*S0[t]^4*Subscript[p, 2][t]*
+      Derivative[2][S0][t]^2 + 2973600*M*S0[t]^3*\[Xi][t]*
+      Derivative[1][S0][t]*Derivative[2][S0][t]^2 + 
+     4890600*M*S0[t]^2*Derivative[1][S0][t]^2*Derivative[2][S0][t]^2 - 
+     1455600*M*S0[t]^3*Derivative[2][S0][t]^3 + 3139200*M^3*S0[t]^6*\[Xi][t]*
+      Derivative[2][\[Xi]][t] + 32400000*M*S0[t]^6*\[Xi][t]^3*
+      Derivative[2][\[Xi]][t] - 7776000*M*S0[t]^5*\[Xi][t]^2*
+      Derivative[1][S0][t]*Derivative[2][\[Xi]][t] - 
+     3510000*M*S0[t]^4*\[Xi][t]*Derivative[1][S0][t]^2*
+      Derivative[2][\[Xi]][t] - 18144000*M*S0[t]^6*\[Xi][t]*
+      Derivative[1][\[Xi]][t]*Derivative[2][\[Xi]][t] + 
+     2268000*M*S0[t]^5*Derivative[1][S0][t]*Derivative[1][\[Xi]][t]*
+      Derivative[2][\[Xi]][t] + 8316000*M*S0[t]^5*\[Xi][t]*
+      Derivative[2][S0][t]*Derivative[2][\[Xi]][t] + 
+     1134000*M*S0[t]^6*Derivative[2][\[Xi]][t]^2 + 
+     37800*M*S0[t]^6*Derivative[2][Subscript[a, 4]][t] - 
+     1569600*M^2*S0[t]^6*Derivative[2][Subscript[p, 2]][t] - 
+     16200000*S0[t]^6*\[Xi][t]^2*Derivative[2][Subscript[p, 2]][t] + 
+     3888000*S0[t]^5*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][Subscript[p, 2]][t] + 1755000*S0[t]^4*
+      Derivative[1][S0][t]^2*Derivative[2][Subscript[p, 2]][t] - 
+     4158000*S0[t]^5*Derivative[2][S0][t]*Derivative[2][Subscript[p, 2]][t] - 
+     5206080*M^3*S0[t]^5*\[Xi][t]*Derivative[3][S0][t] - 
+     9936000*M*S0[t]^5*\[Xi][t]^3*Derivative[3][S0][t] + 
+     9072000*S0[t]^5*\[Xi][t]*Subscript[p, 2][t]*Derivative[3][S0][t] - 
+     1461480*M^3*S0[t]^4*Derivative[1][S0][t]*Derivative[3][S0][t] - 
+     14904000*M*S0[t]^4*\[Xi][t]^2*Derivative[1][S0][t]*
+      Derivative[3][S0][t] + 567000*S0[t]^4*Subscript[p, 2][t]*
+      Derivative[1][S0][t]*Derivative[3][S0][t] - 6613200*M*S0[t]^3*\[Xi][t]*
+      Derivative[1][S0][t]^2*Derivative[3][S0][t] + 
+     147000*M*S0[t]^2*Derivative[1][S0][t]^3*Derivative[3][S0][t] + 
+     4914000*M*S0[t]^5*\[Xi][t]*Derivative[1][\[Xi]][t]*
+      Derivative[3][S0][t] - 2457000*S0[t]^5*Derivative[1][Subscript[p, 2]][
+       t]*Derivative[3][S0][t] - 702000*M*S0[t]^4*\[Xi][t]*
+      Derivative[2][S0][t]*Derivative[3][S0][t] - 
+     3057300*M*S0[t]^3*Derivative[1][S0][t]*Derivative[2][S0][t]*
+      Derivative[3][S0][t] + 555750*M*S0[t]^4*Derivative[3][S0][t]^2 - 
+     6048000*M*S0[t]^6*\[Xi][t]^2*Derivative[3][\[Xi]][t] + 
+     756000*M*S0[t]^5*\[Xi][t]*Derivative[1][S0][t]*Derivative[3][\[Xi]][t] + 
+     1512000*M*S0[t]^6*Derivative[1][\[Xi]][t]*Derivative[3][\[Xi]][t] + 
+     3024000*S0[t]^6*\[Xi][t]*Derivative[3][Subscript[p, 2]][t] - 
+     378000*S0[t]^5*Derivative[1][S0][t]*Derivative[3][Subscript[p, 2]][t] + 
+     889400*M^3*S0[t]^5*Derivative[4][S0][t] + 5832000*M*S0[t]^5*\[Xi][t]^2*
+      Derivative[4][S0][t] - 567000*S0[t]^5*Subscript[p, 2][t]*
+      Derivative[4][S0][t] + 2858400*M*S0[t]^4*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[4][S0][t] - 151500*M*S0[t]^3*Derivative[1][S0][t]^2*
+      Derivative[4][S0][t] + 1410600*M*S0[t]^4*Derivative[2][S0][t]*
+      Derivative[4][S0][t] + 378000*M*S0[t]^6*\[Xi][t]*
+      Derivative[4][\[Xi]][t] - 189000*S0[t]^6*Derivative[4][Subscript[p, 2]][
+       t] - 1659600*M*S0[t]^5*\[Xi][t]*Derivative[5][S0][t] - 
+     210000*M*S0[t]^4*Derivative[1][S0][t]*Derivative[5][S0][t] + 
+     137850*M*S0[t]^5*Derivative[6][S0][t])/S0[t]^6, 
+ Subscript[s, 6][t] -> -1/1944000*
+   (-10075*M^6*S0[t]^4 - 547200*M^4*S0[t]^4*\[Xi][t]^2 - 
+     2851200*M^2*S0[t]^4*\[Xi][t]^4 - 54000*M^2*S0[t]^4*Subscript[a, 4][t] + 
+     331200*M^3*S0[t]^4*Subscript[p, 2][t] + 3110400*M*S0[t]^4*\[Xi][t]^2*
+      Subscript[p, 2][t] + 388800*S0[t]^4*Subscript[p, 2][t]^2 + 
+     28800*M^4*S0[t]^3*\[Xi][t]*Derivative[1][S0][t] + 
+     691200*M^2*S0[t]^3*\[Xi][t]^3*Derivative[1][S0][t] - 
+     1555200*M*S0[t]^3*\[Xi][t]*Subscript[p, 2][t]*Derivative[1][S0][t] + 
+     41880*M^4*S0[t]^2*Derivative[1][S0][t]^2 + 822960*M^2*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^2 - 174960*M*S0[t]^2*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^2 + 691200*M^2*S0[t]*\[Xi][t]*
+      Derivative[1][S0][t]^3 + 60066*M^2*Derivative[1][S0][t]^4 + 
+     4147200*M^2*S0[t]^4*\[Xi][t]^2*Derivative[1][\[Xi]][t] - 
+     1015200*M^2*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[1][\[Xi]][t] - 540000*M^2*S0[t]^4*Derivative[1][\[Xi]][t]^
+       2 - 2073600*M*S0[t]^4*\[Xi][t]*Derivative[1][Subscript[p, 2]][t] + 
+     507600*M*S0[t]^3*Derivative[1][S0][t]*Derivative[1][Subscript[p, 2]][
+       t] - 243120*M^4*S0[t]^3*Derivative[2][S0][t] - 
+     149040*M^2*S0[t]^3*\[Xi][t]^2*Derivative[2][S0][t] + 
+     797040*M*S0[t]^3*Subscript[p, 2][t]*Derivative[2][S0][t] - 
+     1537920*M^2*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*Derivative[2][S0][t] - 
+     192618*M^2*S0[t]*Derivative[1][S0][t]^2*Derivative[2][S0][t] + 
+     42696*M^2*S0[t]^2*Derivative[2][S0][t]^2 - 540000*M^2*S0[t]^4*\[Xi][t]*
+      Derivative[2][\[Xi]][t] + 270000*M*S0[t]^4*
+      Derivative[2][Subscript[p, 2]][t] + 639360*M^2*S0[t]^3*\[Xi][t]*
+      Derivative[3][S0][t] + 60390*M^2*S0[t]^2*Derivative[1][S0][t]*
+      Derivative[3][S0][t] - 159750*M^2*S0[t]^3*Derivative[4][S0][t])/
+    S0[t]^3, Subscript[\[Alpha]1, 6][t] -> 
+  -1/900*(80*M^4*S0[t]^2*Derivative[1][S0][t]^2 + 360*M^2*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^2 - 360*M*S0[t]^2*Subscript[p, 2][t]*
+      Derivative[1][S0][t]^2 - 99*M^2*Derivative[1][S0][t]^4 - 
+     220*M^4*S0[t]^3*Derivative[2][S0][t] - 1440*M^2*S0[t]^3*\[Xi][t]^2*
+      Derivative[2][S0][t] - 360*M*S0[t]^3*Subscript[p, 2][t]*
+      Derivative[2][S0][t] - 900*M^2*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] + 207*M^2*S0[t]*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] - 324*M^2*S0[t]^2*Derivative[2][S0][t]^2 + 
+     900*M^2*S0[t]^3*\[Xi][t]*Derivative[3][S0][t] + 
+     135*M^2*S0[t]^2*Derivative[1][S0][t]*Derivative[3][S0][t] - 
+     135*M^2*S0[t]^3*Derivative[4][S0][t])/S0[t]^4, 
+ Subscript[\[Alpha]2, 6][t] -> 
+  -1/10*(M^2*(Derivative[1][S0][t]^4 + 2*S0[t]*Derivative[1][S0][t]^2*
+       Derivative[2][S0][t] + S0[t]^2*Derivative[2][S0][t]^2))/S0[t]^4, 
+ Subscript[\[Sigma]1, 6][t] -> 
+  -1/5400*(-460*M^4*S0[t]^2*Derivative[1][S0][t]^2 - 
+     4320*M^2*S0[t]^2*\[Xi][t]^2*Derivative[1][S0][t]^2 - 
+     1080*M*S0[t]^2*Subscript[p, 2][t]*Derivative[1][S0][t]^2 - 
+     3600*M^2*S0[t]*\[Xi][t]*Derivative[1][S0][t]^3 - 
+     597*M^2*Derivative[1][S0][t]^4 - 560*M^4*S0[t]^3*Derivative[2][S0][t] - 
+     4320*M^2*S0[t]^3*\[Xi][t]^2*Derivative[2][S0][t] - 
+     1080*M*S0[t]^3*Subscript[p, 2][t]*Derivative[2][S0][t] + 
+     5040*M^2*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]*Derivative[2][S0][t] + 
+     1431*M^2*S0[t]*Derivative[1][S0][t]^2*Derivative[2][S0][t] - 
+     1482*M^2*S0[t]^2*Derivative[2][S0][t]^2 + 2880*M^2*S0[t]^3*\[Xi][t]*
+      Derivative[3][S0][t] - 705*M^2*S0[t]^2*Derivative[1][S0][t]*
+      Derivative[3][S0][t] - 375*M^2*S0[t]^3*Derivative[4][S0][t])/S0[t]^3, 
+ Subscript[\[Sigma]2, 6][t] -> 
+  -1/20*(M^2*(Derivative[1][S0][t]^4 + 2*S0[t]*Derivative[1][S0][t]^2*
+       Derivative[2][S0][t] + S0[t]^2*Derivative[2][S0][t]^2))/S0[t]^3, 
+ Subscript[\[Psi]1, 6][t] -> 
+  -1/57600*(22365*M^5*S0[t]^4*Derivative[1][S0][t]^2 + 
+     401280*M^3*S0[t]^4*\[Xi][t]^2*Derivative[1][S0][t]^2 + 
+     432000*M*S0[t]^4*\[Xi][t]^4*Derivative[1][S0][t]^2 - 
+     10800*M*S0[t]^4*Subscript[a, 4][t]*Derivative[1][S0][t]^2 + 
+     30720*M^2*S0[t]^4*Subscript[p, 2][t]*Derivative[1][S0][t]^2 + 
+     422400*M^3*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]^3 + 
+     1152000*M*S0[t]^3*\[Xi][t]^3*Derivative[1][S0][t]^3 + 
+     107168*M^3*S0[t]^2*Derivative[1][S0][t]^4 + 1134000*M*S0[t]^2*\[Xi][t]^2*
+      Derivative[1][S0][t]^4 + 489600*M*S0[t]*\[Xi][t]*
+      Derivative[1][S0][t]^5 + 78750*M*Derivative[1][S0][t]^6 + 
+     25565*M^5*S0[t]^5*Derivative[2][S0][t] + 458880*M^3*S0[t]^5*\[Xi][t]^2*
+      Derivative[2][S0][t] + 432000*M*S0[t]^5*\[Xi][t]^4*
+      Derivative[2][S0][t] - 10800*M*S0[t]^5*Subscript[a, 4][t]*
+      Derivative[2][S0][t] + 45120*M^2*S0[t]^5*Subscript[p, 2][t]*
+      Derivative[2][S0][t] - 193920*M^3*S0[t]^4*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t] - 576000*M*S0[t]^4*\[Xi][t]^3*Derivative[1][S0][t]*
+      Derivative[2][S0][t] - 134864*M^3*S0[t]^3*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] - 1350000*M*S0[t]^3*\[Xi][t]^2*
+      Derivative[1][S0][t]^2*Derivative[2][S0][t] - 
+     554400*M*S0[t]^2*\[Xi][t]*Derivative[1][S0][t]^3*Derivative[2][S0][t] - 
+     32850*M*S0[t]*Derivative[1][S0][t]^4*Derivative[2][S0][t] + 
+     111488*M^3*S0[t]^4*Derivative[2][S0][t]^2 + 1080000*M*S0[t]^4*\[Xi][t]^2*
+      Derivative[2][S0][t]^2 + 446400*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[2][S0][t]^2 - 66600*M*S0[t]^2*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t]^2 + 107100*M*S0[t]^3*Derivative[2][S0][t]^3 - 
+     228480*M^3*S0[t]^5*\[Xi][t]*Derivative[3][S0][t] - 
+     576000*M*S0[t]^5*\[Xi][t]^3*Derivative[3][S0][t] + 
+     13320*M^3*S0[t]^4*Derivative[1][S0][t]*Derivative[3][S0][t] + 
+     162000*M*S0[t]^4*\[Xi][t]^2*Derivative[1][S0][t]*Derivative[3][S0][t] + 
+     439200*M*S0[t]^3*\[Xi][t]*Derivative[1][S0][t]^2*Derivative[3][S0][t] + 
+     85500*M*S0[t]^2*Derivative[1][S0][t]^3*Derivative[3][S0][t] - 
+     756000*M*S0[t]^4*\[Xi][t]*Derivative[2][S0][t]*Derivative[3][S0][t] - 
+     151200*M*S0[t]^3*Derivative[1][S0][t]*Derivative[2][S0][t]*
+      Derivative[3][S0][t] + 47250*M*S0[t]^4*Derivative[3][S0][t]^2 + 
+     27000*M^3*S0[t]^5*Derivative[4][S0][t] + 270000*M*S0[t]^5*\[Xi][t]^2*
+      Derivative[4][S0][t] - 14400*M*S0[t]^4*\[Xi][t]*Derivative[1][S0][t]*
+      Derivative[4][S0][t] - 45000*M*S0[t]^3*Derivative[1][S0][t]^2*
+      Derivative[4][S0][t] + 81900*M*S0[t]^4*Derivative[2][S0][t]*
+      Derivative[4][S0][t] - 50400*M*S0[t]^5*\[Xi][t]*Derivative[5][S0][t] + 
+     3150*M*S0[t]^5*Derivative[6][S0][t])/S0[t]^6, 
+ Subscript[\[Psi]2, 6][t] -> 
+  (M^3*(16*Derivative[1][S0][t]^4 + 47*S0[t]*Derivative[1][S0][t]^2*
+      Derivative[2][S0][t] + 31*S0[t]^2*Derivative[2][S0][t]^2))/
+   (120*S0[t]^4)}
