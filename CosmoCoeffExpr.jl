@@ -1,46 +1,46 @@
-function DS0f(t)
+function DS0(t)
 
 res = Power(E,(H*t)/2.)*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om)); 
 
 return res;
 end
 
-function DS1f(t)
+function DS1(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(1 + Tanh(Om*(t - tstar))))/2.; 
 
 return res;
 end
 
-function DS2f(t)
+function DS2(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(1 + Tanh(Om*(t - tstar)))*(H + 2*Om + (H - 2*Om)*Tanh(Om*(t - tstar))))/4.; 
 
 return res;
 end
 
-function DS3f(t)
+function DS3(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Sech(Om*(t - tstar)),2)*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(2*(3*H - 2*Om)*Om + (Power(H,2) + 4*Power(Om,2))*Cosh(2*Om*(t - tstar)) + (Power(H,2) - 4*Power(Om,2))*Sinh(2*Om*(t - tstar)))*(1 + Tanh(Om*(t - tstar))))/8.; 
 
 return res;
 end
 
-function DS4f(t)
+function DS4(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Sech(Om*(t - tstar)),2)*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(1 + Tanh(Om*(t - tstar)))*(-Power(H,3) + 12*Power(H,2)*Om + 12*H*Power(Om,2) - 32*Power(Om,3) + 2*(Power(H,3) + 8*Power(Om,3))*Cosh(2*Om*(t - tstar)) + (Power(H,3) - 8*Power(Om,3))*Sech(Om*(t - tstar))*Sinh(3*Om*(t - tstar)) + 12*Power(H,2)*Om*Tanh(Om*(t - tstar)) - 44*H*Power(Om,2)*Tanh(Om*(t - tstar)) + 40*Power(Om,3)*Tanh(Om*(t - tstar))))/16.; 
 
 return res;
 end
 
-function DS5f(t)
+function DS5(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Sech(Om*(t - tstar)),4)*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(100*Power(H,2)*Power(Om,2) - 240*H*Power(Om,3) + 176*Power(Om,4) + 4*Om*(5*Power(H,3) - 10*Power(H,2)*Om + 40*H*Power(Om,2) - 48*Power(Om,3))*Cosh(2*Om*(t - tstar)) + (Power(H,4) + 16*Power(Om,4))*Cosh(4*Om*(t - tstar)) + 20*Power(H,3)*Om*Sinh(2*Om*(t - tstar)) - 40*Power(H,2)*Power(Om,2)*Sinh(2*Om*(t - tstar)) - 80*H*Power(Om,3)*Sinh(2*Om*(t - tstar)) + 160*Power(Om,4)*Sinh(2*Om*(t - tstar)) + Power(H,4)*Sinh(4*Om*(t - tstar)) - 16*Power(Om,4)*Sinh(4*Om*(t - tstar)))*(1 + Tanh(Om*(t - tstar))))/32.; 
 
 return res;
 end
 
-function DS6f(t)
+function DS6(t)
 
 res = (Power(E,(H*t)/2.)*H*Power(Sech(Om*(t - tstar)),6)*Power(Cosh(Om*(t - tstar))*Sech(Om*tstar),H/(2. *Om))*(Cosh(Om*(t - tstar)) + Sinh(Om*(t - tstar)))*(20*Power(Om,2)*(13*Power(H,3) - 12*Power(H,2)*Om - 44*H*Power(Om,2) + 64*Power(Om,3))*Cosh(Om*(t - tstar)) + 10*Om*(3*Power(H,4) - 8*Power(H,3)*Om + 12*Power(H,2)*Power(Om,2) + 40*H*Power(Om,3) - 80*Power(Om,4))*Cosh(3*Om*(t - tstar)) + Power(H,5)*Cosh(5*Om*(t - tstar)) + 32*Power(Om,5)*Cosh(5*Om*(t - tstar)) + 260*Power(H,3)*Power(Om,2)*Sinh(Om*(t - tstar)) - 1680*Power(H,2)*Power(Om,3)*Sinh(Om*(t - tstar)) + 3792*H*Power(Om,4)*Sinh(Om*(t - tstar)) - 2944*Power(Om,5)*Sinh(Om*(t - tstar)) + 30*Power(H,4)*Om*Sinh(3*Om*(t - tstar)) - 80*Power(H,3)*Power(Om,2)*Sinh(3*Om*(t - tstar)) + 120*Power(H,2)*Power(Om,3)*Sinh(3*Om*(t - tstar)) - 592*H*Power(Om,4)*Sinh(3*Om*(t - tstar)) + 864*Power(Om,5)*Sinh(3*Om*(t - tstar)) + Power(H,5)*Sinh(5*Om*(t - tstar)) - 32*Power(Om,5)*Sinh(5*Om*(t - tstar))))/64.; 
 

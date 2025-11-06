@@ -136,6 +136,12 @@ function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
 
     mat = zeros(T,Npts,Npts)
 
+    DS0 = DS0f(t);
+    DS1 = DS1f(t);
+    DS2 = DS2f(t);
+    DS3 = DS3f(t);
+    DS4 = DS4f(t);
+
     for ptind in 1:Npts
         fullind = (domind - 1)*Npts + ptind;
         Phi, S, Sdot, Phidot, A = Var[1:NVar,fullind];
@@ -148,11 +154,12 @@ function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
         #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
         if fullind == 1
             if EqNum == 2
-                if(!scaled)
-                    srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
-                else
-                    srcPrescribed = (a4*DS0(t))/2. - (Power(H,2)*Power(M,2)*DS0(t))/8. - (5*Power(M,4)*DS0(t))/36. + (M*p2*DS0(t))/2. - (H*Power(M,2)*X*DS0(t))/9. - (Power(M,2)*Power(X,2)*DS0(t))/2. - (13*H*Power(M,2)*DS1(t))/36. + (2*Power(M,2)*X*DS1(t))/9. + (3*Power(M,2)*Power(DS1(t),2))/(16. *DS0(t)) - (61*Power(M,2)*DS2(t))/144.;
-                end
+                # if(!scaled)
+                #     srcPrescribed = (DS0(t)/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1(t)-61*DS2(t))+3*M^2*DS1(t)^2/(16*DS0(t));
+                # else
+                #     srcPrescribed = (a4*DS0(t))/2. - (Power(H,2)*Power(M,2)*DS0(t))/8. - (5*Power(M,4)*DS0(t))/36. + (M*p2*DS0(t))/2. - (H*Power(M,2)*X*DS0(t))/9. - (Power(M,2)*Power(X,2)*DS0(t))/2. - (13*H*Power(M,2)*DS1(t))/36. + (2*Power(M,2)*X*DS1(t))/9. + (3*Power(M,2)*Power(DS1(t),2))/(16. *DS0(t)) - (61*Power(M,2)*DS2(t))/144.;
+                # end
+                srcPrescribed = (DS0/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1-61*DS2)+3*M^2*DS1^2/(16*DS0);
             elseif EqNum == 4
                 srcPrescribed = a4;
             end
@@ -160,12 +167,12 @@ function ComputeODEMatrix(EqNum, domind, Var, VarZ, VarZZ, X, p2, a4, t)
 
 
         if degree == 2
-            F2Vec[ptind] = co2_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+            F2Vec[ptind] = co2_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4);
         end
 
-        F1Vec[ptind] = co1_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
-        F0Vec[ptind] = co0_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
-        SRCVec[ptind] = - src_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4);
+        F1Vec[ptind] = co1_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4);
+        F0Vec[ptind] = co0_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4);
+        SRCVec[ptind] = - src_function(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4);
 
     end
 
@@ -344,13 +351,13 @@ function UnSubSdot(SdotSub, X, z, t)
     #Computes Sdot given SdotTilde at a point
     LN = -log(z);
 
-    sd0 = DS0(t)/2;
-    sd1 = DS0(t)*X + DS1(t);
-    sd2 = - (M^2 * DS0(t)^2 - 3 * DS0(t)^2 * X^2 - 6 * X * DS0(t) * DS1(t) - 3 * DS1(t)^2) / (6 * DS0(t));
-    sd3 = - 2* M^2 * DS1(t) / 9;
+    sd0 = DS0f(t)/2;
+    sd1 = DS0f(t)*X + DS1f(t);
+    sd2 = - (M^2 * DS0f(t)^2 - 3 * DS0f(t)^2 * X^2 - 6 * X * DS0f(t) * DS1f(t) - 3 * DS1f(t)^2) / (6 * DS0f(t));
+    sd3 = - 2* M^2 * DS1f(t) / 9;
 
-    sigma4 = - (3*M^2*DS1(t)^2 - M^2*DS0(t)*DS2(t)) / (12 * DS0(t));
-    sigma5 = M^2 * (5*DS1(t)^3 + 3*DS0(t)*DS1(t)*(5*X*DS1(t) - 3*DS2(t))+DS0(t)^2*(-5*X*DS2(t)+2*DS3(t))) / (30 * DS0(t)^2);
+    sigma4 = - (3*M^2*DS1f(t)^2 - M^2*DS0f(t)*DS2f(t)) / (12 * DS0f(t));
+    sigma5 = M^2 * (5*DS1f(t)^3 + 3*DS0f(t)*DS1f(t)*(5*X*DS1f(t) - 3*DS2f(t))+DS0f(t)^2*(-5*X*DS2f(t)+2*DS3f(t))) / (30 * DS0f(t)^2);
 
     sdot = sd0 / z^2 + sd1 / z + sd2 + z * sd3 + sigma4 * LN / z^2 + sigma5 * LN / z^3 + z^2 * SdotSub;
     return sdot
@@ -441,6 +448,12 @@ function TimeDer(Var,X,t, margin)
     deg = 30;
     PhiT = zeros(T,N);
 
+    DS0 = DS0f(t);
+    DS1 = DS1f(t);
+    DS2 = DS2f(t);
+    DS3 = DS3f(t);
+    DS4 = DS4f(t);
+
     #= Begin by computing ξ'(t) at z = zAH by demanding that the horizon stay at fixed z. =#
     subgrid = deleteat!(copy(grid),Npts:Npts:(N-Npts));
 
@@ -479,7 +492,7 @@ function TimeDer(Var,X,t, margin)
     A = Afun(zAH);
     AZ = AZfun(zAH);
 
-    XPrime = DtX(S, SZ,Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2, t);
+    XPrime = DtX(S, SZ,Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2,t , DS0, DS1, DS2, DS3, DS4);
 
 
     #= Now compute ∂_t Φ using the definition of Φdot =#
@@ -511,7 +524,7 @@ function TimeDer(Var,X,t, margin)
         # Phidot = PhidotArr[ii];
         # A = AArr[ii];
 
-        PhiT[ii] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t);
+        PhiT[ii] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t, DS0, DS1, DS2, DS3, DS4);
     end
 
     #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
@@ -524,7 +537,7 @@ function TimeDer(Var,X,t, margin)
 
     # Finally compute a4'(t) using the explicit formula  
 
-    a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1], t);
+    a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1], t, DS0, DS1, DS2, DS3, DS4);
     return XPrime, PhiT, a4Prime;
 end;
 
@@ -700,9 +713,13 @@ function Monitor(Var, t, X)
     p2 = Var[1,1];
     a4 = Var[5,1];
 
-    Eps = -3*a4/4 - M*p2 + M^2 * X^2 - M^4 * (beta - T(7/36))+3*DS1(t)^4/(16*DS0(t)^4) + M^2*(DS1(t)^2 / (8*DS0(t)^2) + 2*DS2(t)/(3*DS0(t)));
-    Mom = -a4/4 + M * p2/3 - M^2 * X^2 /3 +M^4 * (beta - T(5/108)) + DS1(t)^2 * (DS1(t)^2 - 4*DS0(t)DS2(t))/(16*DS0(t)^4) - (M^2/3)*(DS1(t)^2/(8*DS0(t)^2)+13*DS2(t)/(12*DS0(t)));
-    Op = -2*p2 + M * X^2 - M^3 * (4*beta - T(1/3)) + M*(-DS1(t)^2 / (4*DS0(t)^2)+5*DS2(t)/(4*DS0(t)));
+    DS0 = DS0f(t);
+    DS1 = DS1f(t);
+    DS2 = DS2f(t);
+
+    Eps = -3*a4/4 - M*p2 + M^2 * X^2 - M^4 * (beta - T(7/36))+3*DS1^4/(16*DS0^4) + M^2*(DS1^2 / (8*DS0^2) + 2*DS2/(3*DS0));
+    Mom = -a4/4 + M * p2/3 - M^2 * X^2 /3 +M^4 * (beta - T(5/108)) + DS1^2 * (DS1^2 - 4*DS0*DS2)/(16*DS0^4) - (M^2/3)*(DS1^2/(8*DS0^2)+13*DS2/(12*DS0));
+    Op = -2*p2 + M * X^2 - M^3 * (4*beta - T(1/3)) + M*(-DS1^2 / (4*DS0^2)+5*DS2/(4*DS0));
 
     return Eps, Mom, Op
 end
@@ -844,6 +861,12 @@ function EvaluateConstraint(Var, X, previous_sdot_arr_arg, previous_x_arr_arg, t
     previous_x_arr = copy(previous_x_arr_arg);
     previous_sdot_arr = copy(previous_sdot_arr_arg);
 
+    DS0 = DS0f(t);
+    DS1 = DS1f(t);
+    DS2 = DS2f(t);
+    DS3 = DS3f(t);
+    DS4 = DS4f(t);
+
     VarZ, VarZZ = ComputeDerivatives(Var);
     res = zeros(T,N);
     p2 = BoundaryInterpolate(Var[1,:])[1];
@@ -858,7 +881,7 @@ function EvaluateConstraint(Var, X, previous_sdot_arr_arg, previous_x_arr_arg, t
         z = grid[ii]; LN = -T(log(z));
         SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][ii],previous_sdot_arr[2][ii],previous_sdot_arr[3][ii],previous_sdot_arr[4][ii],Var[3,ii],dt);
 
-        res[ii] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT);
+        res[ii] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT, DS0,DS1,DS2,DS3,DS4);
     end
 
     res[1] = BoundaryInterpolate(res)[1];
