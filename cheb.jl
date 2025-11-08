@@ -43,7 +43,7 @@ function chebmat(grid::AbstractVector{T})
         end
     end
 
-    return(Dmat);
+    return Dmat;
 end;
 
 function cheb(start, stop, length)
@@ -71,4 +71,32 @@ function MultiGridChebyshev(start, stop, Ndom, Npts)
     end;
 
     return allmats2, allmats, grid;
+end;
+
+function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
+    #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
+    Ndom = length(endpoints)-1;
+    if !(Ndom == length(lengths))
+        prtinln("Mismatched arrays!!");
+        return 0
+    end
+
+    allmats = [];
+    allmats2 = [];
+    grids = [];
+
+    for ii in 1:Ndom
+        loc_start = endpoints[ii];
+        loc_stop = endpoints[ii+1];
+        Npts = lengths[ii];
+        DM1, grid1 = cheb(loc_start, loc_stop, Npts)
+        DM2 = DM1*DM1;
+
+        push!(allmats, DM1);
+        push!(allmats2, DM2);
+        push!(grids, grid1);
+
+    end;
+
+    return allmats2, allmats, grids;
 end;
