@@ -25,7 +25,7 @@ global const int_p2 = 3;
 global const int_a4 = 4;
 
 global const NVar = 5;
-global const DConst = 0;
+global const DConst = T(10);
 
 Power(x,y) = x^y;
 
@@ -71,6 +71,7 @@ using .Threads
 using ProgressMeter
 using Parameters: @unpack
 using StaticArrays
+using FFTW
 
 function ComputeDerivatives(Var)
     #Takes a full state vector of dimensions NVar × N, returns all first and second z-derivatives.
@@ -91,11 +92,11 @@ function ComputeDerivatives(Var)
 end
 
 function ComputeSingleDerivative(Vec; deg = 1)
-    #Takes a single variable vector, returns its first or second derivative only.
+    #Takes a single variable vector, returns its first, second or 'damping' derivative only.
     DVec = [similar(v) for v in Vec];
 
     Threads.@threads for dom in 1:Ndom
-        DM = (deg ==1 ? diff1_mats[dom] : diff2_mats[dom]);
+        DM = (deg <=2 ? (deg ==1 ? diff1_mats[dom] : diff2_mats[dom]) : damp_mats[dom]);
         DVec[dom] = DM*Vec[dom];
     end
     return DVec
@@ -461,6 +462,9 @@ function TimeDer(params, Var)
         end
     end
 
+    PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
+
+
     # Propagation matching
     for dom in 1:Ndom-1
         z = grids[dom][end];
@@ -475,8 +479,6 @@ function TimeDer(params, Var)
 
     #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
     #CHANGE - now including log terms in near boundary interpolation. 
-
-    PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
 
     # tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
     # PhiT[1] = tempfun(grid[1]);
@@ -540,8 +542,8 @@ function AB4(params, Var ,dt, OldTimeDer)
     
     t, X0, p2, a40 = params;
 
-    OldF = copy(OldTimeDer);
-    Phi0 = copy(Var[1]);
+    OldF = deepcopy(OldTimeDer);
+    Phi0 = deepcopy(Var[1]);
 
     k0X, k0Phi, k0a4 = TimeDer(params,Var);
 
@@ -620,16 +622,16 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     prog = ProgressUnknown(desc = "Starting the evolution", spinner = true)
 
     #First couple of steps to set up later AB4
-    while time<maxtime
+    for ii in 1:3
 
         CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
 
         time = time+dt;
         counter += 1; 
 
-        # push!(OldTimeDer, TimeDer(CurrentParams,VarCurrent));
-        # push!(OldSdot,VarCurrent[ind_sdot])
-        # push!(OldXarr,XCurrent);
+        push!(OldTimeDer, TimeDer(CurrentParams,VarCurrent));
+        push!(OldSdot,VarCurrent[ind_sdot])
+        push!(OldXarr,XCurrent);
         if counter == write_out
             push!(out_io, VarCurrent);
             push!(monitor_io,[time,CurrentParams[ind_X]]);
@@ -653,34 +655,36 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
 
     end
 
-    # while time<maxtime
+    while time<maxtime
 
-    #     CurrentParams, VarCurrent = AB4(CurrentParams, VarCurrent, dt, OldTimeDer);
-    #     #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
+        CurrentParams, VarCurrent = AB4(CurrentParams, VarCurrent, dt, OldTimeDer);
+        #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
 
-    #     time = time+dt;
-    #     counter += 1; 
+        time = time+dt;
+        counter += 1; 
 
-    #     constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
-    #     constr_norm = linalg.norm(constr_arr);
+        constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
+        constr_norm = linalg.norm(constr_arr);
 
-    #     next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
+        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
 
     
-    #     if counter == write_out
-    #         Eps, Mom, Op = Monitor(CurrentParams)
+        if counter == write_out
+            Eps, Mom, Op = Monitor(CurrentParams)
+            push!(out_io, VarCurrent);
+            push!(monitor_io,[time,CurrentParams[ind_X]]);
 
-    #         # out_data = tofloat64(VarCurrent);
-    #         # out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
-    #         # write(out_io,out_data);
-    #         # write(monitor_io, out_monit);
+            # out_data = tofloat64(VarCurrent);
+            # out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
+            # write(out_io,out_data);
+            # write(monitor_io, out_monit);
 
-    #         # flush(out_io);
-    #         # flush(monitor_io);
+            # flush(out_io);
+            # flush(monitor_io);
 
-    #         counter = 0;
-    #     end
-    # end
+            counter = 0;
+        end
+    end
 
     return VarCurrent, XCurrent, a4Current;
 end
@@ -740,27 +744,47 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
     return res
 end
 
+
 function S_to_unsub(params, z, LN, DSVals, sub_value)
 
-t, X, p2, a4 = params;
-S = sub_value;
+    t, X, p2, a4 = params;
+    S = sub_value;
 
-DS0, DS1, DS2, DS3, DS4 = DSVals;
+    DS0, DS1, DS2, DS3, DS4 = DSVals;
 
-unsub_value = (z^5*(3*DS1^4*(199 - 90*LN)*LN*M^2 - 9*DS0*DS1^2*LN*M^2*(3*DS2*(53 + 20*LN) + 100*DS1*(-4*X + z^(-1))) + DS0^2*LN*M*(6*DS2^2*(247 - 45*LN)*M + 15*DS1*M*(47*DS3 + 84*DS2*(-4*X + z^(-1))) + 20*DS1^2*(23*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 -(135*M*X)/z)) + (1800*DS0^4*(3 - M^2*z^2 + X*z*(3 + M^2*z^2)))/z^6 +5*DS0^3*(LN*M*(75*DS4*M + 144*DS3*M*(-4*X + z^(-1)) + 4*DS2*(28*M^3 +54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) - (120*DS1*(-9 +M^2*z^2))/z^5 + (1080*S)/z^2)))/(5400*DS0^3);
+    unsub_value = (z^5*(3*DS1^4*(199 - 90*LN)*LN*M^2 - 9*DS0*DS1^2*LN*M^2*(3*DS2*(53 + 20*LN) + 100*DS1*(-4*X + z^(-1))) + DS0^2*LN*M*(6*DS2^2*(247 - 45*LN)*M + 15*DS1*M*(47*DS3 + 84*DS2*(-4*X + z^(-1))) + 20*DS1^2*(23*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 -(135*M*X)/z)) + (1800*DS0^4*(3 - M^2*z^2 + X*z*(3 + M^2*z^2)))/z^6 +5*DS0^3*(LN*M*(75*DS4*M + 144*DS3*M*(-4*X + z^(-1)) + 4*DS2*(28*M^3 +54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) - (120*DS1*(-9 +M^2*z^2))/z^5 + (1080*S)/z^2)))/(5400*DS0^3);
 
-return unsub_value
+    return unsub_value
 
 end
 
 function A_to_unsub(params, z, LN, DSVals, sub_value, XPrime)
 
-t, X, p2, a4 = params;
-A = sub_value;
-DS0, DS1, DS2, DS3, DS4 = DSVals;
+    t, X, p2, a4 = params;
+    A = sub_value;
+    DS0, DS1, DS2, DS3, DS4 = DSVals;
 
-unsub_value = (z^3*(DS0*(DS3*LN*M^2 + DS2*(-4*LN*M^2*X - 6/z^3 + (2*LN*M^2)/z)) + DS1*(-(DS2*LN*M^2) + (3*DS1)/z^3) + (DS0^2*(3 + 6*X*z - 2*M^2*z^2 + 3*X^2*z^2 - 6*XPrime*z^2 + 3*A*z^4))/z^5))/(3*DS0^2);
+    unsub_value = (z^3*(DS0*(DS3*LN*M^2 + DS2*(-4*LN*M^2*X - 6/z^3 + (2*LN*M^2)/z)) + DS1*(-(DS2*LN*M^2) + (3*DS1)/z^3) + (DS0^2*(3 + 6*X*z - 2*M^2*z^2 + 3*X^2*z^2 - 6*XPrime*z^2 + 3*A*z^4))/z^5))/(3*DS0^2);
 
-return unsub_value
+    return unsub_value
 
+end
+
+function cheb_filter(f::Vector{T})
+    N = length(f) - 1
+    alpha = 36.0437;
+    # Transform to Chebyshev coefficients using DCT-I
+    a = dct(f, 1)
+
+    # Construct modal filter
+    n = (0:N)./N;
+    sigma = exp.(-alpha * (n.^ (8*N)));
+
+    # Apply damping
+    a_filtered = a .* sigma
+
+    # Back to physical space
+    f_filtered = idct(a_filtered, 1);  # normalization for DCT-I
+
+    return f_filtered
 end
