@@ -56,26 +56,22 @@ end;
 function MultiGridChebyshev(start, stop, Ndom, Npts)
     #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
     
-    allmats = [];
-    allmats2 = [];
-    grids = [];
-    dampmats = [];
+    allmats = zeros(T,Ndom,Npts,Npts);
+    allmats2 = zeros(T,Ndom,Npts,Npts);
+    grid = zeros(T, Ndom * Npts);
     L = (stop - start)/Ndom;
     loc_start = copy(start);
     loc_stop = loc_start + L;
 
     for ii in 1:Ndom
-        D1, grid = cheb(loc_start, loc_stop, Npts);
-        push!(grids, grid);
-        push!(allmats, D1);
-        push!(allmats2, D1*D1);
-        push!(dampmats,D1*D1*D1*D1);
+        allmats[ii,1:Npts,1:Npts], grid[(ii - 1)*Npts + 1: ii*Npts] = cheb(loc_start, loc_stop, Npts);
+        allmats2[ii,1:Npts,1:Npts] = allmats[ii,1:Npts,1:Npts]*allmats[ii,1:Npts,1:Npts];
         loc_start = loc_stop;
         loc_stop = loc_start+L;
     end;
 
-    return allmats2, allmats, grids, dampmats
-end
+    return allmats2, allmats, grid;
+end;
 
 function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
     #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
@@ -87,7 +83,6 @@ function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
 
     allmats = [];
     allmats2 = [];
-    dampmats = [];
     grids = [];
 
     for ii in 1:Ndom
@@ -99,10 +94,9 @@ function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
 
         push!(allmats, DM1);
         push!(allmats2, DM2);
-        push!(dampmats, DM2*DM2);
         push!(grids, grid1);
 
     end;
 
-    return allmats2, allmats, grids, dampmats
+    return allmats2, allmats, grids;
 end;

@@ -1,0 +1,866 @@
+{{zs[[i,j]]^2, 0, 0, 
+  (zs[[i,j]]^2*(3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*
+       zs[[i,j]]^6 - 1800*numsB[[6,1]]^4*(3 + 3*numsB[[8,1]]*zs[[i,j]] + 
+        zs[[i,j]]^2*(-1 + numsB[[8,1]]*zs[[i,j]])) + 
+      9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+       (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+        100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) + 
+      Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+       (460*numsB[[7,1]]^2*zs[[i,j]]^2 + 1080*numsB[[2,1]]*numsB[[7,1]]^2*
+         zs[[i,j]]^2 + 3*(2*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*
+           zs[[i,j]]^2 + 60*numsB[[7,1]]^2*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+            24*numsB[[8,1]]^2*zs[[i,j]]^2) - 5*numsB[[7,1]]*zs[[i,j]]*
+           (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+             (-1 + 4*numsB[[8,1]]*zs[[i,j]])))) + 5*numsB[[6,1]]^3*
+       (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+        Log[zs[[i,j]]]*zs[[i,j]]^4*(112*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+          216*\[Gamma]ds[[3]]*numsB[[2,1]]*zs[[i,j]]^2 + 
+          3*(12*\[Gamma]ds[[3]]*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+              24*numsB[[8,1]]^2*zs[[i,j]]^2) + zs[[i,j]]*
+             (25*\[Gamma]ds[[5]]*zs[[i,j]] - 48*\[Gamma]ds[[4]]*(-1 + 
+                4*numsB[[8,1]]*zs[[i,j]]))))) - 5400*numsB[[6,1]]^3*
+       zs[[i,j]]^4*nums[[2,1,i,j]])^2)/(29160000*numsB[[6,1]]^6)}, 
+ {0, 0, 0, 0}, {8*zs[[i,j]], 
+  (zs[[i,j]]*(3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*
+      zs[[i,j]]^6 - 1800*numsB[[6,1]]^4*(3 + 3*numsB[[8,1]]*zs[[i,j]] + 
+       zs[[i,j]]^2*(-1 + numsB[[8,1]]*zs[[i,j]])) + 
+     9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+      (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+       100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) + 
+     Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+      (460*numsB[[7,1]]^2*zs[[i,j]]^2 + 1080*numsB[[2,1]]*numsB[[7,1]]^2*
+        zs[[i,j]]^2 + 3*(2*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*
+          zs[[i,j]]^2 + 60*numsB[[7,1]]^2*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+           24*numsB[[8,1]]^2*zs[[i,j]]^2) - 5*numsB[[7,1]]*zs[[i,j]]*
+          (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+            (-1 + 4*numsB[[8,1]]*zs[[i,j]])))) + 5*numsB[[6,1]]^3*
+      (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+       Log[zs[[i,j]]]*zs[[i,j]]^4*(112*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+         216*\[Gamma]ds[[3]]*numsB[[2,1]]*zs[[i,j]]^2 + 
+         3*(12*\[Gamma]ds[[3]]*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+             24*numsB[[8,1]]^2*zs[[i,j]]^2) + zs[[i,j]]*
+            (25*\[Gamma]ds[[5]]*zs[[i,j]] - 48*\[Gamma]ds[[4]]*
+              (-1 + 4*numsB[[8,1]]*zs[[i,j]]))))) - 
+     5400*numsB[[6,1]]^3*zs[[i,j]]^4*nums[[2,1,i,j]]))/(5400*numsB[[6,1]]^3), 
+  (zs[[i,j]]*(3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*
+      zs[[i,j]]^6 - 1800*numsB[[6,1]]^4*(3 + 3*numsB[[8,1]]*zs[[i,j]] + 
+       zs[[i,j]]^2*(-1 + numsB[[8,1]]*zs[[i,j]])) + 
+     9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+      (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+       100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) + 
+     Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+      (460*numsB[[7,1]]^2*zs[[i,j]]^2 + 1080*numsB[[2,1]]*numsB[[7,1]]^2*
+        zs[[i,j]]^2 + 3*(2*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*
+          zs[[i,j]]^2 + 60*numsB[[7,1]]^2*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+           24*numsB[[8,1]]^2*zs[[i,j]]^2) - 5*numsB[[7,1]]*zs[[i,j]]*
+          (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+            (-1 + 4*numsB[[8,1]]*zs[[i,j]])))) + 5*numsB[[6,1]]^3*
+      (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+       Log[zs[[i,j]]]*zs[[i,j]]^4*(112*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+         216*\[Gamma]ds[[3]]*numsB[[2,1]]*zs[[i,j]]^2 + 
+         3*(12*\[Gamma]ds[[3]]*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+             24*numsB[[8,1]]^2*zs[[i,j]]^2) + zs[[i,j]]*
+            (25*\[Gamma]ds[[5]]*zs[[i,j]] - 48*\[Gamma]ds[[4]]*
+              (-1 + 4*numsB[[8,1]]*zs[[i,j]]))))) - 
+     5400*numsB[[6,1]]^3*zs[[i,j]]^4*nums[[2,1,i,j]]))/(8100*numsB[[6,1]]^3), 
+  (zs[[i,j]]*(3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*
+       zs[[i,j]]^6 - 1800*numsB[[6,1]]^4*(3 + 3*numsB[[8,1]]*zs[[i,j]] + 
+        zs[[i,j]]^2*(-1 + numsB[[8,1]]*zs[[i,j]])) + 
+      9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+       (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+        100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) + 
+      Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+       (460*numsB[[7,1]]^2*zs[[i,j]]^2 + 1080*numsB[[2,1]]*numsB[[7,1]]^2*
+         zs[[i,j]]^2 + 3*(2*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*
+           zs[[i,j]]^2 + 60*numsB[[7,1]]^2*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+            24*numsB[[8,1]]^2*zs[[i,j]]^2) - 5*numsB[[7,1]]*zs[[i,j]]*
+           (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+             (-1 + 4*numsB[[8,1]]*zs[[i,j]])))) + 5*numsB[[6,1]]^3*
+       (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+        Log[zs[[i,j]]]*zs[[i,j]]^4*(112*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+          216*\[Gamma]ds[[3]]*numsB[[2,1]]*zs[[i,j]]^2 + 
+          3*(12*\[Gamma]ds[[3]]*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+              24*numsB[[8,1]]^2*zs[[i,j]]^2) + zs[[i,j]]*
+             (25*\[Gamma]ds[[5]]*zs[[i,j]] - 48*\[Gamma]ds[[4]]*(-1 + 
+                4*numsB[[8,1]]*zs[[i,j]]))))) - 5400*numsB[[6,1]]^3*
+       zs[[i,j]]^4*nums[[2,1,i,j]])^2)/(4860000*numsB[[6,1]]^6)}, 
+ {0, 0, 0, 0}, 
+ {
+  (648 + (9*(zs[[i,j]]*(-2*(1 + 4*Log[zs[[i,j]]])*numsB[[7,1]]^3*
+           zs[[i,j]]^3 + numsB[[6,1]]^3*(2 - 4*numsB[[8,1]]*zs[[i,j]]) + 
+          numsB[[6,1]]^2*zs[[i,j]]^2*((1 + 4*Log[zs[[i,j]]])*\[Gamma]ds[[4]]*
+             zs[[i,j]] + \[Gamma]ds[[3]]*(1 + 3*Log[zs[[i,j]]] - 
+              3*numsB[[8,1]]*(zs[[i,j]] + 4*Log[zs[[i,j]]]*zs[[i,j]]))) + 
+          numsB[[6,1]]*numsB[[7,1]]*zs[[i,j]]^2*((1 + 4*Log[zs[[i,j]]])*
+             \[Gamma]ds[[3]]*zs[[i,j]] + numsB[[7,1]]*(1 + 3*Log[zs[[i,j]]] - 
+              3*numsB[[8,1]]*(zs[[i,j]] + 4*Log[zs[[i,j]]]*zs[[i,j]])))) + 
+        6*numsB[[6,1]]^3*zs[[i,j]]^3*nums[[1,1,i,j]] + 
+        2*numsB[[6,1]]^3*zs[[i,j]]^4*nums[[1,2,i,j]])^2)/numsB[[6,1]]^6)/54, 
+  (2*(1 + 6*Log[zs[[i,j]]])*numsB[[2,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+      numsB[[7,1]]^2)*zs[[i,j]]^6)/(5*numsB[[6,1]]) + 
+   ((1 + 6*Log[zs[[i,j]]])*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+      23*numsB[[7,1]]^2)*zs[[i,j]]^6)/(135*numsB[[6,1]]) + 
+   (zs[[i,j]]^2*((199 + 1554*Log[zs[[i,j]]] + 1080*Log[zs[[i,j]]]^2)*
+       numsB[[7,1]]^4*zs[[i,j]]^4 - 600*numsB[[6,1]]^4*
+       (-2 + 3*numsB[[8,1]]*zs[[i,j]]) + 3*numsB[[6,1]]*numsB[[7,1]]^2*
+       zs[[i,j]]^3*(3*(-53 - 238*Log[zs[[i,j]]] + 240*Log[zs[[i,j]]]^2)*
+         \[Gamma]ds[[3]]*zs[[i,j]] + 100*numsB[[7,1]]*
+         (-1 - 5*Log[zs[[i,j]]] + 4*numsB[[8,1]]*(zs[[i,j]] + 
+            6*Log[zs[[i,j]]]*zs[[i,j]]))) + numsB[[6,1]]^2*zs[[i,j]]^2*
+       (2*(247 + 1662*Log[zs[[i,j]]] + 540*Log[zs[[i,j]]]^2)*
+         \[Gamma]ds[[3]]^2*zs[[i,j]]^2 + 60*numsB[[7,1]]^2*
+         (5 + 20*Log[zs[[i,j]]] + 24*(1 + 6*Log[zs[[i,j]]])*numsB[[8,1]]^2*
+           zs[[i,j]]^2 - 15*numsB[[8,1]]*(zs[[i,j]] + 5*Log[zs[[i,j]]]*
+             zs[[i,j]])) - 5*numsB[[7,1]]*zs[[i,j]]*
+         (-47*(1 + 6*Log[zs[[i,j]]])*\[Gamma]ds[[4]]*zs[[i,j]] + 
+          84*\[Gamma]ds[[3]]*(-1 - 5*Log[zs[[i,j]]] + 4*numsB[[8,1]]*
+             (zs[[i,j]] + 6*Log[zs[[i,j]]]*zs[[i,j]])))) + 
+      5*numsB[[6,1]]^3*zs[[i,j]]*(120*numsB[[7,1]] + 
+        zs[[i,j]]*(12*\[Gamma]ds[[3]]*(5 + 20*Log[zs[[i,j]]] + 
+            24*(1 + 6*Log[zs[[i,j]]])*numsB[[8,1]]^2*zs[[i,j]]^2 - 
+            15*numsB[[8,1]]*(zs[[i,j]] + 5*Log[zs[[i,j]]]*zs[[i,j]])) + 
+          zs[[i,j]]*(25*(1 + 6*Log[zs[[i,j]]])*\[Gamma]ds[[5]]*zs[[i,j]] - 
+            48*\[Gamma]ds[[4]]*(-1 - 5*Log[zs[[i,j]]] + 4*numsB[[8,1]]*(
+                zs[[i,j]] + 6*Log[zs[[i,j]]]*zs[[i,j]])))))))/
+    (900*numsB[[6,1]]^3) - 8*zs[[i,j]]^4*nums[[2,1,i,j]] - 
+   2*zs[[i,j]]*(numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + 
+     zs[[i,j]]^4*nums[[2,2,i,j]]), 
+  (3*(597 + 4861*Log[zs[[i,j]]] + 3420*Log[zs[[i,j]]]^2)*numsB[[7,1]]^4*
+     zs[[i,j]]^6 - 1800*numsB[[6,1]]^4*(3 + 12*numsB[[8,1]]*zs[[i,j]] + 
+      zs[[i,j]]^2*(-7 + 10*numsB[[8,1]]*zs[[i,j]])) + 
+    9*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+     (3*(-159 - 767*Log[zs[[i,j]]] + 760*Log[zs[[i,j]]]^2)*\[Gamma]ds[[3]]*
+       zs[[i,j]] + 100*numsB[[7,1]]*(-3 - 16*Log[zs[[i,j]]] + 
+        4*(3 + 19*Log[zs[[i,j]]])*numsB[[8,1]]*zs[[i,j]])) + 
+    numsB[[6,1]]^2*zs[[i,j]]^4*(460*(3 + 19*Log[zs[[i,j]]])*numsB[[7,1]]^2*
+       zs[[i,j]]^2 + 1080*(3 + 19*Log[zs[[i,j]]])*numsB[[2,1]]*numsB[[7,1]]^2*
+       zs[[i,j]]^2 + 3*(2*(741 + 5233*Log[zs[[i,j]]] + 1710*Log[zs[[i,j]]]^2)*
+         \[Gamma]ds[[3]]^2*zs[[i,j]]^2 + 60*numsB[[7,1]]^2*
+         (15 + 65*Log[zs[[i,j]]] - 15*(3 + 16*Log[zs[[i,j]]])*numsB[[8,1]]*
+           zs[[i,j]] + 24*(3 + 19*Log[zs[[i,j]]])*numsB[[8,1]]^2*
+           zs[[i,j]]^2) + 5*numsB[[7,1]]*zs[[i,j]]*
+         (47*(3 + 19*Log[zs[[i,j]]])*\[Gamma]ds[[4]]*zs[[i,j]] - 
+          84*\[Gamma]ds[[3]]*(-3 - 16*Log[zs[[i,j]]] + 
+            4*(3 + 19*Log[zs[[i,j]]])*numsB[[8,1]]*zs[[i,j]])))) - 
+    70200*numsB[[6,1]]^3*zs[[i,j]]^4*nums[[2,1,i,j]] + 
+    5*numsB[[6,1]]^3*(240*numsB[[7,1]]*zs[[i,j]]*(-18 + 5*zs[[i,j]]^2) + 
+      zs[[i,j]]^4*(112*(3 + 19*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+        216*(3 + 19*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*numsB[[2,1]]*
+         zs[[i,j]]^2 + 3*(12*\[Gamma]ds[[3]]*(15 + 65*Log[zs[[i,j]]] - 
+            15*(3 + 16*Log[zs[[i,j]]])*numsB[[8,1]]*zs[[i,j]] + 
+            24*(3 + 19*Log[zs[[i,j]]])*numsB[[8,1]]^2*zs[[i,j]]^2) + 
+          zs[[i,j]]*(25*(3 + 19*Log[zs[[i,j]]])*\[Gamma]ds[[5]]*zs[[i,j]] - 
+            48*\[Gamma]ds[[4]]*(-3 - 16*Log[zs[[i,j]]] + 
+              4*(3 + 19*Log[zs[[i,j]]])*numsB[[8,1]]*zs[[i,j]]))) - 
+        3240*zs[[i,j]]*nums[[2,2,i,j]])))/(16200*numsB[[6,1]]^3), 
+  (3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*zs[[i,j]]^6 - 
+     1800*numsB[[6,1]]^4*(3 + 3*numsB[[8,1]]*zs[[i,j]] + 
+       zs[[i,j]]^2*(-1 + numsB[[8,1]]*zs[[i,j]])) + 
+     9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+      (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+       100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) + 
+     Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+      (460*numsB[[7,1]]^2*zs[[i,j]]^2 + 1080*numsB[[2,1]]*numsB[[7,1]]^2*
+        zs[[i,j]]^2 + 3*(2*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*
+          zs[[i,j]]^2 + 60*numsB[[7,1]]^2*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+           24*numsB[[8,1]]^2*zs[[i,j]]^2) - 5*numsB[[7,1]]*zs[[i,j]]*
+          (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+            (-1 + 4*numsB[[8,1]]*zs[[i,j]])))) + 5*numsB[[6,1]]^3*
+      (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+       Log[zs[[i,j]]]*zs[[i,j]]^4*(112*\[Gamma]ds[[3]]*zs[[i,j]]^2 + 
+         216*\[Gamma]ds[[3]]*numsB[[2,1]]*zs[[i,j]]^2 + 
+         3*(12*\[Gamma]ds[[3]]*(5 - 15*numsB[[8,1]]*zs[[i,j]] + 
+             24*numsB[[8,1]]^2*zs[[i,j]]^2) + zs[[i,j]]*
+            (25*\[Gamma]ds[[5]]*zs[[i,j]] - 48*\[Gamma]ds[[4]]*
+              (-1 + 4*numsB[[8,1]]*zs[[i,j]]))))) - 
+     5400*numsB[[6,1]]^3*zs[[i,j]]^4*nums[[2,1,i,j]])^2/
+   (4860000*numsB[[6,1]]^6)}, {12, 1, -numsB[[6,1]]/3, 6*numsB[[6,1]]^2}, 
+ {(zs[[i,j]]^4*(2*(-numsB[[7,1]]/9 + (numsB[[6,1]]*numsB[[8,1]])/3) + 
+      (2*numsB[[6,1]])/zs[[i,j]]^3 + Log[zs[[i,j]]]*
+       (6*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*zs[[i,j]] + 
+        (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+            numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+           15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+            numsB[[8,1]])*zs[[i,j]]^2)/(5*numsB[[6,1]]^2) - 
+        (9*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^3)/
+         (10*numsB[[6,1]]^3) + 
+        20*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+              2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^3) + 
+      (2*(3*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*
+          zs[[i,j]]^2 + (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 
+            7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+            15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+             numsB[[8,1]])*zs[[i,j]]^3)/(15*numsB[[6,1]]^2) - 
+         ((\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^4)/
+          (10*numsB[[6,1]]^3) + 
+         5*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+               2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+              (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+             20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 23*
+                numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+               125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+                numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*
+                numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                 7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                 5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                 2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^4))/zs[[i,j]] - 
+      ((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+        ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] + 5*numsB[[7,1]]^3 + 15*numsB[[6,1]]*
+            (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]])*
+          zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+        (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+           (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^5)/zs[[i,j]]^2) + 2*zs[[i,j]]^3*
+     (-numsB[[6,1]]/3 - numsB[[6,1]]/zs[[i,j]]^2 + 
+      2*(-numsB[[7,1]]/9 + (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]] + 
+      Log[zs[[i,j]]]*(3*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^2 + 
+        (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+            numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+           15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+            numsB[[8,1]])*zs[[i,j]]^3)/(15*numsB[[6,1]]^2) - 
+        ((\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^4)/
+         (10*numsB[[6,1]]^3) + 
+        5*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+              2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^4) + ((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+        ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] + 5*numsB[[7,1]]^3 + 15*numsB[[6,1]]*
+            (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]])*
+          zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+        (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+           (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^5)/zs[[i,j]]) + 
+    (2*zs[[i,j]]^4*(numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + 
+       numsB[[6,1]]/zs[[i,j]] - (numsB[[6,1]]*zs[[i,j]])/3 + 
+       (-numsB[[7,1]]/9 + (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]]^2 + 
+       Log[zs[[i,j]]]*((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*
+          zs[[i,j]]^3 + ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 
+            7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+            15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+             numsB[[8,1]])*zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+         (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+            (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+              (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+             20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 23*
+                numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+               125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+                numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*
+                numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                 7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                 5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                 2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^5))*
+      (1 - 2*numsB[[8,1]]*zs[[i,j]] + Log[zs[[i,j]]]*
+         (3*(\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+             (2*numsB[[6,1]]^2))*zs[[i,j]]^2 + 
+          (2*(3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+              numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+             9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+             9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^3)/
+           (3*numsB[[6,1]]^3)) + ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + 
+            numsB[[7,1]]^2/(2*numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+          ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+              numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+              numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^2*
+              numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3))/zs[[i,j]] + 
+        3*zs[[i,j]]^2*nums[[1,1,i,j]] + zs[[i,j]]^3*nums[[1,2,i,j]])^2)/3)/
+   zs[[i,j]]^5, 
+  (-(zs[[i,j]]^2*((-2*numsB[[7,1]])/9 - numsB[[6,1]]/zs[[i,j]]^3 - 
+       (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]])/zs[[i,j]]^2 + 
+       Log[zs[[i,j]]]*(((-12*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+            36*numsB[[7,1]]^2)*zs[[i,j]])/(72*numsB[[6,1]]) + 
+         ((-360*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 1620*\[Gamma]ds[[3]]*
+             numsB[[6,1]]*numsB[[7,1]] - 900*numsB[[7,1]]^3 + 
+            900*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+            2700*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^2)/
+          (1800*numsB[[6,1]]^2)) + 
+       (((-12*\[Gamma]ds[[3]]*numsB[[6,1]] + 36*numsB[[7,1]]^2)*zs[[i,j]]^2)/
+          (144*numsB[[6,1]]) + ((-360*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+            1620*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+            900*numsB[[7,1]]^3 + 900*\[Gamma]ds[[3]]*numsB[[6,1]]^2*
+             numsB[[8,1]] - 2700*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*
+           zs[[i,j]]^3)/(5400*numsB[[6,1]]^2))/zs[[i,j]])*
+      (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + numsB[[6,1]]/zs[[i,j]] - 
+       (numsB[[6,1]]*zs[[i,j]])/3 + (-numsB[[7,1]]/9 + 
+         (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]]^2 + 
+       Log[zs[[i,j]]]*((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*
+          zs[[i,j]]^3 + ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 
+            7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+            15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+             numsB[[8,1]])*zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+         (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+            (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+              (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+             20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 23*
+                numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+               125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+                numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*
+                numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                 7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                 5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                 2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^5) + 
+       zs[[i,j]]^3*nums[[2,1,i,j]])) + 
+    (2*((-zs[[i,j]] + numsB[[8,1]]*zs[[i,j]]^2 - Log[zs[[i,j]]]*
+           ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/(2*
+                numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+            ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*
+                \[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*
+                numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+             (6*numsB[[6,1]]^3)) - zs[[i,j]]^3*nums[[1,1,i,j]] + 
+          (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*
+              ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                  (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                   numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                   numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                   numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                    2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+             zs[[i,j]]^3*nums[[1,1,i,j]])^3/phiM^2)^2/2 - 
+       (4*(-3/2 - (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^2/2 + 
+           (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^4/(4*phiM^2))^2)/3)*
+      (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + numsB[[6,1]]/zs[[i,j]] - 
+        (numsB[[6,1]]*zs[[i,j]])/3 + (-numsB[[7,1]]/9 + 
+          (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]]^2 + 
+        Log[zs[[i,j]]]*((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+             (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+          ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+              numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+             15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+              numsB[[8,1]])*zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+          (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+                2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*(
+                \[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+              20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^
+                  2 + 125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[
+                  4]]*numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 
+                240*numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                  7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                  5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                 (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                  2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^5) + 
+        zs[[i,j]]^3*nums[[2,1,i,j]])^2)/3 - 2*zs[[i,j]]^2*
+     (-numsB[[6,1]]/6 + numsB[[7,1]]^2/(2*numsB[[6,1]]) + 
+      numsB[[7,1]]*numsB[[8,1]] + (numsB[[6,1]]*numsB[[8,1]]^2)/2 + 
+      numsB[[6,1]]/(2*zs[[i,j]]^2) + 
+      (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]])/zs[[i,j]] - 
+      (2*numsB[[7,1]]*zs[[i,j]])/9 + Log[zs[[i,j]]]*
+       (((-12*\[Gamma]ds[[3]]*numsB[[6,1]] + 36*numsB[[7,1]]^2)*zs[[i,j]]^2)/
+         (144*numsB[[6,1]]) + ((-360*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+           1620*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+           900*numsB[[7,1]]^3 + 900*\[Gamma]ds[[3]]*numsB[[6,1]]^2*
+            numsB[[8,1]] - 2700*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*
+          zs[[i,j]]^3)/(5400*numsB[[6,1]]^2)))*(-numsB[[6,1]]/3 - 
+      numsB[[6,1]]/zs[[i,j]]^2 + 2*(-numsB[[7,1]]/9 + 
+        (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]] + 
+      Log[zs[[i,j]]]*(3*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^2 + 
+        (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+            numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+           15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+            numsB[[8,1]])*zs[[i,j]]^3)/(15*numsB[[6,1]]^2) - 
+        ((\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^4)/
+         (10*numsB[[6,1]]^3) + 
+        5*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+              2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^4) + ((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+        ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] + 5*numsB[[7,1]]^3 + 15*numsB[[6,1]]*
+            (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]])*
+          zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+        (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+           (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^5)/zs[[i,j]] + 3*zs[[i,j]]^2*nums[[2,1,i,j]] + 
+      zs[[i,j]]^3*nums[[2,2,i,j]]))/zs[[i,j]]^2, 
+  (-((2*zs[[i,j]]^2*(Log[zs[[i,j]]]*(((-9*\[Gamma]ds[[3]]*numsB[[6,1]] - 9*
+                numsB[[7,1]]^2)*zs[[i,j]])/(6*numsB[[6,1]]^2) + 
+            ((-6*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 6*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]] + 12*numsB[[7,1]]^3 + 18*
+                \[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] + 18*numsB[[6,1]]*
+                numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^2)/
+             (4*numsB[[6,1]]^3)) + (((-9*\[Gamma]ds[[3]]*numsB[[6,1]] - 9*
+                numsB[[7,1]]^2)*zs[[i,j]]^2)/(12*numsB[[6,1]]^2) + 
+            ((-6*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 6*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]] + 12*numsB[[7,1]]^3 + 18*
+                \[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] + 18*numsB[[6,1]]*
+                numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^3)/
+             (12*numsB[[6,1]]^3))/zs[[i,j]]) + 
+        (-1 + (3*(zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^2)/phiM^2)*(-zs[[i,j]] + 
+          numsB[[8,1]]*zs[[i,j]]^2 - Log[zs[[i,j]]]*
+           ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/(2*
+                numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+            ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*
+                \[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*
+                numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+             (6*numsB[[6,1]]^3)) - zs[[i,j]]^3*nums[[1,1,i,j]] + 
+          (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*
+              ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                  (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                   numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                   numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                   numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                    2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+             zs[[i,j]]^3*nums[[1,1,i,j]])^3/phiM^2) - 
+        (8*(-zs[[i,j]] + numsB[[8,1]]*zs[[i,j]]^2 - Log[zs[[i,j]]]*
+            ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+             ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+                9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+                9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+              (6*numsB[[6,1]]^3)) - zs[[i,j]]^3*nums[[1,1,i,j]] + 
+           (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^3/phiM^2)*
+          (-3/2 - (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^2/2 + 
+           (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*(
+                (\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                   (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                    numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                    numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                    numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^
+                     2*numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) + 
+              zs[[i,j]]^3*nums[[1,1,i,j]])^4/(4*phiM^2)))/3)*
+       (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + numsB[[6,1]]/zs[[i,j]] - 
+        (numsB[[6,1]]*zs[[i,j]])/3 + (-numsB[[7,1]]/9 + 
+          (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]]^2 + 
+        Log[zs[[i,j]]]*((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+             (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+          ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+              numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+             15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+              numsB[[8,1]])*zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+          (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+                2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*(
+                \[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+              20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^
+                  2 + 125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[
+                  4]]*numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 
+                240*numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                  7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                  5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                 (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                  2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^5) + 
+        zs[[i,j]]^3*nums[[2,1,i,j]]))/3 - 
+    zs[[i,j]]^2*(-1/2 + Log[zs[[i,j]]]*
+       (((-9*\[Gamma]ds[[3]]*numsB[[6,1]] - 9*numsB[[7,1]]^2)*zs[[i,j]]^2)/
+         (12*numsB[[6,1]]^2) + ((-6*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 
+           6*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] + 12*numsB[[7,1]]^3 + 
+           18*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] + 
+           18*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^3)/
+         (12*numsB[[6,1]]^3)))*(-numsB[[6,1]]/3 - numsB[[6,1]]/zs[[i,j]]^2 + 
+      2*(-numsB[[7,1]]/9 + (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]] + 
+      Log[zs[[i,j]]]*(3*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^2 + 
+        (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+            numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+           15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+            numsB[[8,1]])*zs[[i,j]]^3)/(15*numsB[[6,1]]^2) - 
+        ((\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^4)/
+         (10*numsB[[6,1]]^3) + 
+        5*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+              2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^4) + ((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+        ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] + 5*numsB[[7,1]]^3 + 15*numsB[[6,1]]*
+            (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]])*
+          zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+        (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+           (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^5)/zs[[i,j]] + 3*zs[[i,j]]^2*nums[[2,1,i,j]] + 
+      zs[[i,j]]^3*nums[[2,2,i,j]]) - zs[[i,j]]^2*
+     (1 - 2*numsB[[8,1]]*zs[[i,j]] + Log[zs[[i,j]]]*
+       (3*(\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+           (2*numsB[[6,1]]^2))*zs[[i,j]]^2 + 
+        (2*(3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+            numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^2*
+            numsB[[8,1]])*zs[[i,j]]^3)/(3*numsB[[6,1]]^3)) + 
+      ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/(2*numsB[[6,1]]^2))*
+         zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+           3*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+           9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+           9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+         (6*numsB[[6,1]]^3))/zs[[i,j]] + 3*zs[[i,j]]^2*nums[[1,1,i,j]] + 
+      zs[[i,j]]^3*nums[[1,2,i,j]])*(-numsB[[6,1]]/6 + 
+      numsB[[7,1]]^2/(2*numsB[[6,1]]) + numsB[[7,1]]*numsB[[8,1]] + 
+      (numsB[[6,1]]*numsB[[8,1]]^2)/2 + numsB[[6,1]]/(2*zs[[i,j]]^2) + 
+      (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]])/zs[[i,j]] - 
+      (2*numsB[[7,1]]*zs[[i,j]])/9 + Log[zs[[i,j]]]*
+       (((-12*\[Gamma]ds[[3]]*numsB[[6,1]] + 36*numsB[[7,1]]^2)*zs[[i,j]]^2)/
+         (144*numsB[[6,1]]) + ((-360*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+           1620*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+           900*numsB[[7,1]]^3 + 900*\[Gamma]ds[[3]]*numsB[[6,1]]^2*
+            numsB[[8,1]] - 2700*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*
+          zs[[i,j]]^3)/(5400*numsB[[6,1]]^2)) + zs[[i,j]]^2*nums[[3,1,i,j]]))/
+   zs[[i,j]]^2, (12*zs[[i,j]]^2*(-numsB[[6,1]]/3 - numsB[[6,1]]/zs[[i,j]]^2 + 
+      2*(-numsB[[7,1]]/9 + (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]] + 
+      Log[zs[[i,j]]]*(3*(-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^2 + 
+        (2*(-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*
+            numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+           15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+            numsB[[8,1]])*zs[[i,j]]^3)/(15*numsB[[6,1]]^2) - 
+        ((\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2*zs[[i,j]]^4)/
+         (10*numsB[[6,1]]^3) + 
+        5*(-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^
+              2)/(10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^4) + ((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/
+           (6*numsB[[6,1]]))*zs[[i,j]]^3 + 
+        ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 7*\[Gamma]ds[[3]]*numsB[[6,1]]*
+            numsB[[7,1]] + 5*numsB[[7,1]]^3 + 15*numsB[[6,1]]*
+            (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]])*
+          zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+        (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+           (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+             (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+            20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 
+              23*numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+              125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+               numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*numsB[[6,
+                1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*numsB[[6,1]]*(
+                4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 7*\[Gamma]ds[[3]]*
+                 numsB[[6,1]]*numsB[[7,1]] - 5*numsB[[7,1]]^3)*numsB[[8,1]] + 
+              1440*numsB[[6,1]]^2*(\[Gamma]ds[[3]]*numsB[[6,1]] + 
+                numsB[[7,1]]^2)*numsB[[8,1]]^2))/(5400*numsB[[6,1]]^3))*
+         zs[[i,j]]^5)/zs[[i,j]] + 3*zs[[i,j]]^2*nums[[2,1,i,j]] + 
+      zs[[i,j]]^3*nums[[2,2,i,j]])*(-numsB[[6,1]]/6 + 
+      numsB[[7,1]]^2/(2*numsB[[6,1]]) + numsB[[7,1]]*numsB[[8,1]] + 
+      (numsB[[6,1]]*numsB[[8,1]]^2)/2 + numsB[[6,1]]/(2*zs[[i,j]]^2) + 
+      (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]])/zs[[i,j]] - 
+      (2*numsB[[7,1]]*zs[[i,j]])/9 + Log[zs[[i,j]]]*
+       (((-12*\[Gamma]ds[[3]]*numsB[[6,1]] + 36*numsB[[7,1]]^2)*zs[[i,j]]^2)/
+         (144*numsB[[6,1]]) + ((-360*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+           1620*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+           900*numsB[[7,1]]^3 + 900*\[Gamma]ds[[3]]*numsB[[6,1]]^2*
+            numsB[[8,1]] - 2700*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*
+          zs[[i,j]]^3)/(5400*numsB[[6,1]]^2)) + 
+      zs[[i,j]]^2*nums[[3,1,i,j]]) + 
+    (numsB[[7,1]] + numsB[[6,1]]*numsB[[8,1]] + numsB[[6,1]]/zs[[i,j]] - 
+       (numsB[[6,1]]*zs[[i,j]])/3 + (-numsB[[7,1]]/9 + 
+         (numsB[[6,1]]*numsB[[8,1]])/3)*zs[[i,j]]^2 + 
+       Log[zs[[i,j]]]*((-\[Gamma]ds[[3]]/6 - numsB[[7,1]]^2/(6*numsB[[6,1]]))*
+          zs[[i,j]]^3 + ((-4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 
+            7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] + 5*numsB[[7,1]]^3 + 
+            15*numsB[[6,1]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*
+             numsB[[8,1]])*zs[[i,j]]^4)/(30*numsB[[6,1]]^2) + 
+         (-(Log[zs[[i,j]]]*(\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)^2)/
+            (10*numsB[[6,1]]^3) - (1080*numsB[[2,1]]*numsB[[6,1]]^2*
+              (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2) + 
+             20*numsB[[6,1]]^2*(28*\[Gamma]ds[[3]]*numsB[[6,1]] + 23*
+                numsB[[7,1]]^2) + 3*(494*\[Gamma]ds[[3]]^2*numsB[[6,1]]^2 + 
+               125*\[Gamma]ds[[5]]*numsB[[6,1]]^3 + 235*\[Gamma]ds[[4]]*
+                numsB[[6,1]]^2*numsB[[7,1]] - 477*\[Gamma]ds[[3]]*
+                numsB[[6,1]]*numsB[[7,1]]^2 + 199*numsB[[7,1]]^4 - 240*
+                numsB[[6,1]]*(4*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 
+                 7*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[7,1]] - 
+                 5*numsB[[7,1]]^3)*numsB[[8,1]] + 1440*numsB[[6,1]]^2*
+                (\[Gamma]ds[[3]]*numsB[[6,1]] + numsB[[7,1]]^2)*numsB[[8,1]]^
+                 2))/(5400*numsB[[6,1]]^3))*zs[[i,j]]^5) + 
+       zs[[i,j]]^3*nums[[2,1,i,j]])^2*
+     (zs[[i,j]]^4*(6/zs[[i,j]]^4 + (4*numsB[[8,1]])/zs[[i,j]]^3 + 
+        Log[zs[[i,j]]]*((-4*\[Gamma]ds[[3]])/(3*numsB[[6,1]]) + 
+          ((-36*\[Gamma]ds[[4]]*numsB[[6,1]] + 36*\[Gamma]ds[[3]]*
+              numsB[[7,1]] + 144*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[8,1]])*
+            zs[[i,j]])/(18*numsB[[6,1]]^2)) + 
+        (2*((-4*\[Gamma]ds[[3]]*zs[[i,j]])/(3*numsB[[6,1]]) + 
+           ((-36*\[Gamma]ds[[4]]*numsB[[6,1]] + 36*\[Gamma]ds[[3]]*numsB[[7,
+                1]] + 144*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[8,1]])*
+             zs[[i,j]]^2)/(36*numsB[[6,1]]^2)))/zs[[i,j]] - 
+        ((-2*\[Gamma]ds[[3]]*zs[[i,j]]^2)/(3*numsB[[6,1]]) + 
+          ((-36*\[Gamma]ds[[4]]*numsB[[6,1]] + 36*\[Gamma]ds[[3]]*
+              numsB[[7,1]] + 144*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[8,1]])*
+            zs[[i,j]]^3)/(108*numsB[[6,1]]^2))/zs[[i,j]]^2) + 
+      2*zs[[i,j]]^3*(-2/zs[[i,j]]^3 - (2*numsB[[8,1]])/zs[[i,j]]^2 + 
+        Log[zs[[i,j]]]*((-4*\[Gamma]ds[[3]]*zs[[i,j]])/(3*numsB[[6,1]]) + 
+          ((-36*\[Gamma]ds[[4]]*numsB[[6,1]] + 36*\[Gamma]ds[[3]]*
+              numsB[[7,1]] + 144*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[8,1]])*
+            zs[[i,j]]^2)/(36*numsB[[6,1]]^2)) + 
+        ((-2*\[Gamma]ds[[3]]*zs[[i,j]]^2)/(3*numsB[[6,1]]) + 
+          ((-36*\[Gamma]ds[[4]]*numsB[[6,1]] + 36*\[Gamma]ds[[3]]*
+              numsB[[7,1]] + 144*\[Gamma]ds[[3]]*numsB[[6,1]]*numsB[[8,1]])*
+            zs[[i,j]]^3)/(108*numsB[[6,1]]^2))/zs[[i,j]]) - 
+      (4*((-zs[[i,j]] + numsB[[8,1]]*zs[[i,j]]^2 - Log[zs[[i,j]]]*
+             ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                 (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                  numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                  numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                  numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^2*
+                  numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3)) - 
+            zs[[i,j]]^3*nums[[1,1,i,j]] + (zs[[i,j]] - numsB[[8,1]]*
+                zs[[i,j]]^2 + Log[zs[[i,j]]]*((\[Gamma]ds[[3]]/(2*numsB[[6,
+                      1]]) + numsB[[7,1]]^2/(2*numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+                 ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+                     numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+                    9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+                    9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+                  (6*numsB[[6,1]]^3)) + zs[[i,j]]^3*nums[[1,1,i,j]])^3/
+             phiM^2)^2/2 - (4*(-3/2 - (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + 
+                Log[zs[[i,j]]]*((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + 
+                    numsB[[7,1]]^2/(2*numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+                  ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+                      numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+                     9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+                     9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+                   (6*numsB[[6,1]]^3)) + zs[[i,j]]^3*nums[[1,1,i,j]])^2/2 + 
+             (zs[[i,j]] - numsB[[8,1]]*zs[[i,j]]^2 + Log[zs[[i,j]]]*
+                 ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+                     (2*numsB[[6,1]]^2))*zs[[i,j]]^3 + ((3*\[Gamma]ds[[4]]*
+                      numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+                      numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+                      numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*
+                      numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^4)/
+                   (6*numsB[[6,1]]^3)) + zs[[i,j]]^3*nums[[1,1,i,j]])^4/
+              (4*phiM^2))^2)/3))/3 - 4*zs[[i,j]]^2*
+       (1 - 2*numsB[[8,1]]*zs[[i,j]] + Log[zs[[i,j]]]*
+         (3*(\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + numsB[[7,1]]^2/
+             (2*numsB[[6,1]]^2))*zs[[i,j]]^2 + 
+          (2*(3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*
+              numsB[[6,1]]*numsB[[7,1]] - 6*numsB[[7,1]]^3 - 
+             9*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] - 
+             9*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^3)/
+           (3*numsB[[6,1]]^3)) + ((\[Gamma]ds[[3]]/(2*numsB[[6,1]]) + 
+            numsB[[7,1]]^2/(2*numsB[[6,1]]^2))*zs[[i,j]]^3 + 
+          ((3*\[Gamma]ds[[4]]*numsB[[6,1]]^2 + 3*\[Gamma]ds[[3]]*numsB[[6,1]]*
+              numsB[[7,1]] - 6*numsB[[7,1]]^3 - 9*\[Gamma]ds[[3]]*
+              numsB[[6,1]]^2*numsB[[8,1]] - 9*numsB[[6,1]]*numsB[[7,1]]^2*
+              numsB[[8,1]])*zs[[i,j]]^4)/(6*numsB[[6,1]]^3))/zs[[i,j]] + 
+        3*zs[[i,j]]^2*nums[[1,1,i,j]] + zs[[i,j]]^3*nums[[1,2,i,j]])*
+       (-1/2 + Log[zs[[i,j]]]*(((-9*\[Gamma]ds[[3]]*numsB[[6,1]] - 
+             9*numsB[[7,1]]^2)*zs[[i,j]]^2)/(12*numsB[[6,1]]^2) + 
+          ((-6*\[Gamma]ds[[4]]*numsB[[6,1]]^2 - 6*\[Gamma]ds[[3]]*
+              numsB[[6,1]]*numsB[[7,1]] + 12*numsB[[7,1]]^3 + 
+             18*\[Gamma]ds[[3]]*numsB[[6,1]]^2*numsB[[8,1]] + 
+             18*numsB[[6,1]]*numsB[[7,1]]^2*numsB[[8,1]])*zs[[i,j]]^3)/
+           (12*numsB[[6,1]]^3)) + zs[[i,j]]^2*nums[[4,1,i,j]])))/
+   zs[[i,j]]^2}, {(-9*\[Gamma]ds[[3]]*numsB[[6,1]] - 4*numsB[[6,1]]^2 - 
+    9*numsB[[7,1]]^2 - 48*numsB[[6,1]]*numsB[[7,1]]*numsB[[8,1]] + 
+    72*numsB[[6,1]]^2*nums[[1,1,1,1]])/(18*numsB[[6,1]]), 
+  -(-61*\[Gamma]ds[[3]]*numsB[[6,1]] - 20*numsB[[6,1]]^2 + 
+     72*numsB[[1,1]]*numsB[[6,1]]^2 + 72*numsB[[2,1]]*numsB[[6,1]]^2 + 
+     27*numsB[[7,1]]^2 + 32*numsB[[6,1]]*numsB[[7,1]]*numsB[[8,1]] - 
+     72*numsB[[6,1]]^2*numsB[[8,1]]^2)/(144*numsB[[6,1]]), 
+  \[Gamma]ds[[3]]/4 + numsB[[6,1]]/9 - numsB[[7,1]]^2/(4*numsB[[6,1]]) + 
+   (numsB[[6,1]]*numsB[[8,1]]^2)/2 - (numsB[[6,1]]*nums[[1,1,1,1]])/2, 
+  (-2*(15*\[Gamma]ds[[3]]*numsB[[6,1]] + 4*numsB[[6,1]]^2 + 
+     9*numsB[[7,1]]^2 + 18*numsB[[6,1]]*numsB[[7,1]]*numsB[[8,1]] - 
+     45*numsB[[6,1]]^2*nums[[1,1,1,1]] - 135*numsB[[6,1]]*nums[[2,1,1,1]] + 
+     54*numsB[[6,1]]*nums[[3,1,1,1]] + 18*numsB[[6,1]]^2*nums[[4,1,1,1]]))/
+   9}, (-((3*Log[zs[[i,j]]]*(199 + 180*Log[zs[[i,j]]])*numsB[[7,1]]^4*
+       zs[[i,j]]^6 + 9*Log[zs[[i,j]]]*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^5*
+       (3*(-53 + 40*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+        100*numsB[[7,1]]*(-1 + 4*numsB[[8,1]]*zs[[i,j]])) - 
+      1800*numsB[[6,1]]^4*(3 - zs[[i,j]]^2 + numsB[[8,1]]*zs[[i,j]]*
+         (3 + zs[[i,j]]^2)) + Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^4*
+       (6*(247 + 90*Log[zs[[i,j]]])*\[Gamma]ds[[3]]^2*zs[[i,j]]^2 + 
+        20*numsB[[7,1]]^2*(45 - 135*numsB[[8,1]]*zs[[i,j]] + 
+          (23 + 54*numsB[[2,1]])*zs[[i,j]]^2 + 216*numsB[[8,1]]^2*
+           zs[[i,j]]^2) - 15*numsB[[7,1]]*zs[[i,j]]*
+         (-47*\[Gamma]ds[[4]]*zs[[i,j]] + 84*\[Gamma]ds[[3]]*
+           (-1 + 4*numsB[[8,1]]*zs[[i,j]]))) + 5*numsB[[6,1]]^3*
+       (120*numsB[[7,1]]*zs[[i,j]]*(-9 + zs[[i,j]]^2) + 
+        zs[[i,j]]^4*(-144*Log[zs[[i,j]]]*\[Gamma]ds[[4]]*zs[[i,j]]*
+           (-1 + 4*numsB[[8,1]]*zs[[i,j]]) + 4*Log[zs[[i,j]]]*\[Gamma]ds[[3]]*
+           (45 - 135*numsB[[8,1]]*zs[[i,j]] + (28 + 54*numsB[[2,1]])*
+             zs[[i,j]]^2 + 216*numsB[[8,1]]^2*zs[[i,j]]^2) + 
+          15*(5*Log[zs[[i,j]]]*\[Gamma]ds[[5]]*zs[[i,j]]^2 - 
+            72*nums[[2,1,i,j]]))))*
+     (4*Log[zs[[i,j]]]*numsB[[7,1]]^3*zs[[i,j]]^4 + 
+       Log[zs[[i,j]]]*numsB[[6,1]]^2*zs[[i,j]]^3*
+        (-2*\[Gamma]ds[[4]]*zs[[i,j]] + \[Gamma]ds[[3]]*
+          (-3 + 6*numsB[[8,1]]*zs[[i,j]])) + Log[zs[[i,j]]]*numsB[[6,1]]*
+        numsB[[7,1]]*zs[[i,j]]^3*(-2*\[Gamma]ds[[3]]*zs[[i,j]] + 
+         numsB[[7,1]]*(-3 + 6*numsB[[8,1]]*zs[[i,j]])) + 
+       numsB[[6,1]]^3*zs[[i,j]]*(-2 + 4*zs[[i,j]]^2*nums[[4,1,i,j]]))^2) + 
+   120*numsB[[6,1]]^5*(30*(1 + 3*Log[zs[[i,j]]])*numsB[[7,1]]^3*zs[[i,j]]^5 + 
+     180*numsB[[6,1]]^3*(1 + numsB[[8,1]]*zs[[i,j]]) + 
+     9*numsB[[6,1]]*numsB[[7,1]]*zs[[i,j]]^4*
+      (-6*(1 + 3*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*zs[[i,j]] + 
+       5*numsB[[7,1]]*(-1 - 2*Log[zs[[i,j]]] + 2*(1 + 3*Log[zs[[i,j]]])*
+          numsB[[8,1]]*zs[[i,j]])) + numsB[[6,1]]^2*
+      (20*numsB[[7,1]]*zs[[i,j]]*(9 + 2*zs[[i,j]]^2) + 
+       3*zs[[i,j]]^4*(4*(1 + 3*Log[zs[[i,j]]])*\[Gamma]ds[[4]]*zs[[i,j]] - 
+         5*\[Gamma]ds[[3]]*(-1 - 2*Log[zs[[i,j]]] + 2*(1 + 3*Log[zs[[i,j]]])*
+            numsB[[8,1]]*zs[[i,j]]) - 60*(2*nums[[3,1,i,j]] + 
+           zs[[i,j]]*nums[[3,2,i,j]]))))*
+    (numsB[[7,1]]*zs[[i,j]]^2*(3*numsB[[7,1]] + Log[zs[[i,j]]]*
+        \[Gamma]ds[[3]]*zs[[i,j]]^3) + numsB[[6,1]]*
+      (-(Log[zs[[i,j]]]*\[Gamma]ds[[4]]*zs[[i,j]]^5) + 
+       \[Gamma]ds[[3]]*(-6*zs[[i,j]]^2 - 2*Log[zs[[i,j]]]*zs[[i,j]]^4 + 
+         4*Log[zs[[i,j]]]*numsB[[8,1]]*zs[[i,j]]^5)) + 
+     numsB[[6,1]]^2*(3 + 6*numsB[[8,1]]*zs[[i,j]] + 3*numsB[[8,1]]^2*
+        zs[[i,j]]^2 - 2*(1 + 3*numsB[[9,1]])*zs[[i,j]]^2 + 
+       3*zs[[i,j]]^4*nums[[5,1,i,j]])) + 120*numsB[[6,1]]^5*
+    (-30*Log[zs[[i,j]]]*numsB[[7,1]]^3*zs[[i,j]]^5 + 
+     30*numsB[[6,1]]^3*(3 + 6*numsB[[8,1]]*zs[[i,j]] - zs[[i,j]]^2 + 
+       3*numsB[[8,1]]^2*zs[[i,j]]^2) + 9*numsB[[6,1]]*numsB[[7,1]]*
+      zs[[i,j]]^2*(6*Log[zs[[i,j]]]*\[Gamma]ds[[3]]*zs[[i,j]]^3 + 
+       5*numsB[[7,1]]*(2 + Log[zs[[i,j]]]*zs[[i,j]]^2 - 
+         2*Log[zs[[i,j]]]*numsB[[8,1]]*zs[[i,j]]^3)) + 
+     numsB[[6,1]]^2*(20*numsB[[7,1]]*zs[[i,j]]*
+        (9 + 9*numsB[[8,1]]*zs[[i,j]] - 2*zs[[i,j]]^2) + 
+       3*zs[[i,j]]^4*(-4*Log[zs[[i,j]]]*\[Gamma]ds[[4]]*zs[[i,j]] + 
+         5*Log[zs[[i,j]]]*\[Gamma]ds[[3]]*(-1 + 2*numsB[[8,1]]*zs[[i,j]]) + 
+         60*nums[[3,1,i,j]])))*((1 + 3*Log[zs[[i,j]]])*\[Gamma]ds[[3]]*
+      numsB[[7,1]]*zs[[i,j]]^5 + numsB[[6,1]]*zs[[i,j]]^4*
+      (-((1 + 3*Log[zs[[i,j]]])*\[Gamma]ds[[4]]*zs[[i,j]]) + 
+       2*\[Gamma]ds[[3]]*(-1 - 2*Log[zs[[i,j]]] + 2*(1 + 3*Log[zs[[i,j]]])*
+          numsB[[8,1]]*zs[[i,j]])) + numsB[[6,1]]^2*
+      (-6 - 6*numsB[[8,1]]*zs[[i,j]] + 6*zs[[i,j]]^4*nums[[5,1,i,j]] + 
+       3*zs[[i,j]]^5*nums[[5,2,i,j]])) + 720*numsB[[6,1]]^6*zs[[i,j]]*
+    (60*Log[zs[[i,j]]]*numsB[[7,1]]^4*zs[[i,j]]^5 + 
+     180*numsB[[6,1]]^4*numsB[[9,1]]*zs[[i,j]]*(1 + numsB[[8,1]]*zs[[i,j]]) + 
+     18*numsB[[6,1]]^2*(3*Log[zs[[i,j]]]*\[Gamma]ds[[3]]^2*zs[[i,j]]^5 + 
+       Log[zs[[i,j]]]*numsB[[7,1]]*(3*\[Gamma]ds[[4]] - 
+         5*numsB[[7,1]]*numsB[[9,1]])*zs[[i,j]]^5 + 5*\[Gamma]ds[[3]]*
+        numsB[[7,1]]*zs[[i,j]]^2*(2 + Log[zs[[i,j]]]*zs[[i,j]]^2 - 
+         2*Log[zs[[i,j]]]*numsB[[8,1]]*zs[[i,j]]^3)) + 
+     9*numsB[[6,1]]*numsB[[7,1]]^2*zs[[i,j]]^2*
+      (-16*Log[zs[[i,j]]]*\[Gamma]ds[[3]]*zs[[i,j]]^3 + 
+       5*numsB[[7,1]]*(-2 - Log[zs[[i,j]]]*zs[[i,j]]^2 + 
+         2*Log[zs[[i,j]]]*numsB[[8,1]]*zs[[i,j]]^3)) + 
+     numsB[[6,1]]^3*(30*numsB[[7,1]]*(3 + 6*numsB[[8,1]]*zs[[i,j]] + 
+         3*numsB[[8,1]]^2*zs[[i,j]]^2 + (-1 + 6*numsB[[9,1]])*zs[[i,j]]^2) + 
+       10*\[Gamma]ds[[3]]*zs[[i,j]]*(18 + 18*numsB[[8,1]]*zs[[i,j]] - 
+         4*zs[[i,j]]^2 + 3*Log[zs[[i,j]]]*numsB[[9,1]]*zs[[i,j]]^4) + 
+       3*zs[[i,j]]^4*(-4*Log[zs[[i,j]]]*\[Gamma]ds[[5]]*zs[[i,j]] + 
+         5*Log[zs[[i,j]]]*\[Gamma]ds[[4]]*(-1 + 2*numsB[[8,1]]*zs[[i,j]]) + 
+         60*nums[[6,1,i,j]]))))/(129600*numsB[[6,1]]^9*zs[[i,j]]^4)}

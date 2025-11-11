@@ -11,49 +11,49 @@
 
 function DS0f(t)
 
-res = 1; 
+res = T(1); 
 
 return res;
 end
 
 function DS1f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end
 
 function DS2f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end
 
 function DS3f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end
 
 function DS4f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end
 
 function DS5f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end
 
 function DS6f(t)
 
-res = 0; 
+res = T(0); 
 
 return res;
 end

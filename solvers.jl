@@ -2,6 +2,10 @@
 # X = ξ. XPrime = ξ'. In general, spatial derivatives are denoted by adding a Z at the end, i.e. AZZ = ∂_zz(A).
 # The data needed at the start of a timestep: a profile for Φ (which includes ϕ_2), values for a_4 and ξ.
 
+tofloat64(x) = x             # fallback for non-collections
+tofloat64(x::Number) = Float64(x)
+tofloat64(x::AbstractArray) = [tofloat64(y) for y in x]
+
 # Properties of the ODEs and indices of the different variables, as needed.
 
 global const varnamelist = ["S","Sdot","Phidot","A"]; 
@@ -21,39 +25,9 @@ global const int_p2 = 3;
 global const int_a4 = 4;
 
 global const NVar = 5;
+global const DConst = 0;
 
-# --------------------------------------------------------------
-#  Struct definition: this holds all variables at a grid point.
-# --------------------------------------------------------------
-
-struct PDEVars{T}
-    Phi::T
-    PhiZ::T
-    PhiZZ::T
-    S::T
-    SZ::T
-    SZZ::T
-    Sdot::T
-    SdotZ::T
-    SdotZZ::T
-    Phidot::T
-    PhidotZ::T
-    PhidotZZ::T
-    A::T
-    AZ::T
-    AZZ::T
-    z::T
-    LN::T
-    t::T
-    X::T
-    p2::T
-    a4::T
-    DS0::T
-    DS1::T
-    DS2::T
-    DS3::T
-    DS4::T
-end
+Power(x,y) = x^y;
 
 # --------------------------------------------------------------
 #  Dictionary for accessing different coefficient functions
@@ -100,8 +74,8 @@ using StaticArrays
 
 function ComputeDerivatives(Var)
     #Takes a full state vector of dimensions NVar × N, returns all first and second z-derivatives.
-    VarZ  = copy(Var);
-    VarZZ = copy(Var);
+    VarZ  = [similar(v) for v in Var]
+    VarZZ = [similar(v) for v in Var]
 
     
     Threads.@threads for dom in 1:Ndom
@@ -118,13 +92,26 @@ end
 
 function ComputeSingleDerivative(Vec; deg = 1)
     #Takes a single variable vector, returns its first or second derivative only.
-    DVec = copy(Vec);
+    DVec = [similar(v) for v in Vec];
 
     Threads.@threads for dom in 1:Ndom
         DM = (deg ==1 ? diff1_mats[dom] : diff2_mats[dom]);
         DVec[dom] = DM*Vec[dom];
     end
     return DVec
+end
+
+function BoundaryInterpolate(VarVec)
+    # Take the near - boundary points in the given variable and fit a model, including some logarithmic terms, to extract the FG expansion coefficients
+    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z) .* z .+ p[6] .* log.(z) .* z .^2;
+
+    zdata = grids[1][2:7];
+    ydata = VarVec[2:7];
+
+    p0 = [VarVec[2], 0., 0., 0. , 0., 0.];
+    fit = lsq.curve_fit(model, zdata, ydata, p0);
+    params = lsq.coef(fit);
+    return params
 end
 
 #---------------------------------------------
@@ -142,7 +129,7 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
     t, X, p2, a4 = params;
     Npts = domain_sizes[domind];
 
-    srcPrescribed = zero(T);
+    # srcPrescribed = zero(T);
 
     if degree == 2
         co2_function = function_map[var][:Coeff2]
@@ -178,16 +165,6 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
 
         pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
 
-        #Compute the expressions for the boundary conditions of Sdot and A, to be used later.
-        if domind*ptind == 1
-            if EqNum == 2
-                srcPrescribed = (DS0/36)*(18*M*(p2-M*X^2)+18*a4-5*M^4)+(M^2/144)*(32*X*DS1-61*DS2)+3*M^2*DS1^2/(16*DS0); #Could move this to a separate function
-            elseif EqNum == 4
-                srcPrescribed = a4;
-            end
-        end
-
-
         if degree == 2
             F2Vec[ptind] = co2_function(pdevars);
         end
@@ -208,28 +185,25 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
         mat = F1Vec .* DM1  + linalg.Diagonal(F0Vec);
     end
 
-    if isnan(SRCVec[1])
-        SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
-    end
-    return mat, SRCVec, srcPrescribed
+    # if isnan(SRCVec[1])||isinf(SRCVec[1])
+    #     SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
+    # end
+    return mat, SRCVec
 
 end
 
-function DomainMatching(EqNum, degree, srcPrescribed, solParticular, solHomogeneous, solHomogeneous2)
+function DomainMatching(EqNum, degree, solParticular, solHomogeneous, solHomogeneous2)
     #Domain matching. We have 4 possibilities: degree = 1 or 2, regular singular point = true or false. Annoyingly the 4 equations in the system satiate these.
+    #Now moved dealing with the BCs to the matrix expressions themselves.
+
     sol = copy(zero_var);
 
     if degree == 1 #In the nth subdomain, the solution is given as y_particular + c_n * y_homogeneous
         coeffMat = zeros(T,Ndom,Ndom);
         coeffSrc = zeros(T,Ndom);
-    
-        if !regBC[EqNum] #Fulfilled by the 2nd equation.
-            coeffMat[1,1] = solHomogeneous[1][1];
-            coeffSrc[1] = - solParticular[1][1] + srcPrescribed;
-        elseif regBC[EqNum] #Fulfilled by the 3rd equation. Effectively amounts to setting c0 to zero.
-            coeffMat[1,1] =  T(1.);
-            coeffSrc[1] = T(0.);
-        end
+
+        coeffMat[1,1] =  T(1.);
+        coeffSrc[1] = T(0.);
 
         for dom in 2:Ndom
             coeffMat[dom,dom - 1] = solHomogeneous[dom-1][end];
@@ -240,7 +214,7 @@ function DomainMatching(EqNum, degree, srcPrescribed, solParticular, solHomogene
         coeffVec = coeffMat \ coeffSrc;
 
         for dom in 1:Ndom
-            sol[dom] = solParticular[dom] + coeffVec[ii] .* solHomogeneous[dom];
+            sol[dom] = solParticular[dom] + coeffVec[dom] .* solHomogeneous[dom];
         end
 
     elseif degree == 2 #In the nth subdomain, the solution is given as y_particular + c_n * y_homogeneous + d_n * y_homogeneous2
@@ -259,13 +233,8 @@ function DomainMatching(EqNum, degree, srcPrescribed, solParticular, solHomogene
         coeffMat[Ndom+1,Ndom+1] = T(1.);
         coeffSrc[Ndom+1] = T(0.);
 
-        if !regBC[EqNum] #Satisfied by the 4th equation. c0 is necessary.
-            coeffMat[1,1] = solHomogeneous[1][1];
-            coeffSrc[1] = - solParticular[1][1] + srcPrescribed;
-        elseif regBC[EqNum] #Satisfied by the 1st equation. We may also drop c0.
-            coeffMat[1,1] =  T(1.);
-            coeffSrc[1] = T(0.);
-        end
+        coeffMat[1,1] =  T(1.);
+        coeffSrc[1] = T(0.);
 
         for dom in 2:Ndom
             coeffMat[dom,dom - 1] = solHomogeneous[dom-1][end];
@@ -311,17 +280,14 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
         solHomogeneous2 = copy(zero_var);
     end
 
-    srcPrescribed = zero(T);
+    # srcPrescribed = zero(T);
 
     #Basic parallelization here:
     Threads.@threads for domind in 1:Ndom
         Npts = domain_sizes[domind];
 
-        if domind == 1
-            mat, SRCVec, srcPrescribed = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ);
-        else
-            mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ);
-        end
+        
+        mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ);
 
         HomoSRCVec = zeros(T, Npts);
         HomoSRCVec[1] = 1;
@@ -331,7 +297,7 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
         #The homogeneous solution is linearly independent from the particular integral
         #For 2nd order ODEs we need two independent homogeneous solutions - second one ensures we can also have derivative continuity!        
 
-        if domind > 1 || !regBC[EqNum]
+        if domind > 1
 
             if degree == 2 #For 2nd order ODEs we'll generically need another independent homogeneous solution
                 mat2 = copy(mat);
@@ -351,30 +317,46 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
             solParticular[domind] = lumat \ SRCVec;
 
 
-        else #First domain, and a regular singular point at z = 0: we only need one solution here.
+        else #First domain: we only need one solution here.
             # SRCVec[1] = BoundaryInterpolate(SRCVec)[1];
             solHomogeneous[domind] = zeros(T, Npts);
             solParticular[domind] = mat \ SRCVec;
         end
     end;
 
-    sol = (degree == 1 ? DomainMatching(EqNum,degree,srcPrescribed,solParticular,solHomogeneous,nothing) : DomainMatching(EqNum,degree,srcPrescribed,solParticular,solHomogeneous,solHomogeneous2))
+    sol = (degree == 1 ? DomainMatching(EqNum,degree,solParticular,solHomogeneous,nothing) : DomainMatching(EqNum,degree,solParticular,solHomogeneous,solHomogeneous2))
 
     return sol
 end
 
-function ComputeBulk(params, Var)
+function ComputeBulk(params, Vararg)
     # PhiTilde, ξ and a_4 together determine all data on a given time slice. This just computes it.
+    Var = deepcopy(Vararg);
     VarZ, VarZZ = ComputeDerivatives(Var);
 
     for eq in 1:4
         Var[eq+1]= LinearSolveODE(eq, params, Var, VarZ, VarZZ);
-        state[2][eq+1] = Var[eq+1];
         VarZ[eq+1] = ComputeSingleDerivative(Var[eq+1]);
         VarZZ[eq+1] = ComputeSingleDerivative(Var[eq+1], deg=2);
     end
 
-    return state;
+    return Var;
+end
+
+function ComputeBulkFromVec(params, phi_vec)
+    # PhiTilde, ξ and a_4 together determine all data on a given time slice. This just computes it.
+    # Takes only a vector for phi as an argument!
+    Var = [copy(zero_var) for var in 1:NVar];
+    Var[1] = copy(phi_vec);
+    VarZ, VarZZ = ComputeDerivatives(Var);
+
+    for eq in 1:4
+        Var[eq+1]= LinearSolveODE(eq, params, Var, VarZ, VarZZ);
+        VarZ[eq+1] = ComputeSingleDerivative(Var[eq+1]);
+        VarZZ[eq+1] = ComputeSingleDerivative(Var[eq+1], deg=2);
+    end
+
+    return Var;
 end
 
 function CorrectXi(params, Var)
@@ -382,14 +364,16 @@ function CorrectXi(params, Var)
     # Needs to be iterated over
 
     t = params[ind_t];
-    DSVals = [DS0f(t), DS1f(t), DSf2(t), DSf3(t), DSf4(t)];
+    Xnew = copy(params[ind_X]);
+    DSVals = [DS0f(t), DS1f(t), DS2f(t), DS3f(t), DS4f(t)];
 
     flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
-    Sdot_unsub = [S_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, Var[ind_sdot,ii]) for ii in 1:length(flatgrid)];
+    flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
+    Sdot_unsub = [S_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in 1:length(flatgrid)];
 
 
     # This interpolation degree is arbitrary!!
-    interpolant = poly.fit(subgrid, Sdot_unsub, 20);
+    interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
     foo(x,p) = interpolant(x);
     problem = nonlin.NonlinearProblem(foo, zAH);
     sol = nonlin.solve(problem);
@@ -399,31 +383,22 @@ function CorrectXi(params, Var)
     
 end;
 
-function PlotSdot(Var, X, t,margin::Int64 = 10)
+function PlotSdot(params, Var)
 
-    z = grid[margin];
-    SdotSub = Var[3,margin];
-    SdotFull = [UnSubSdot(SdotSub, X, z,t)];
-    subgrid = [z];
+    t = params[ind_t];
+    DSVals = [DS0f(t), DS1f(t), DS2f(t), DS3f(t), DS4f(t)];
+    
+    flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
+    flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
+    Sdot_unsub = [S_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in 1:length(flatgrid)];
 
-    for ii in (margin+1):N
-        if ii%Npts == 1
-            continue
-        else
-            z = grid[ii];
-            SdotSub = Var[3, ii];
-            push!(subgrid, z);
-            push!(SdotFull,UnSubSdot(SdotSub,X,z,t));
-        end
-    end 
-
-    interpolant = poly.fit(subgrid, SdotFull, 20);
+    interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
     foo(x,p) = interpolant(x);
 
-    fig = plt.plot(interpolant, subgrid[1], subgrid[end],label = "Interpolant");
-    plt.scatter!(fig, subgrid, SdotFull, label = "Sdot");
+    fig = plt.plot(interpolant, flatgrid[1], flatgrid[end],label = "Interpolant");
+    plt.scatter!(fig, flatgrid, Sdot_unsub, label = "Sdot");
     plt.vline!(fig, [zAH], color = :red, linestyle = :dash, label = "zAH")
-    plt.hline!(fig, [0], color = :red, linestyle = :dash, label = "y = 0")
+    plt.hline!(fig, [0], color = :red, linestyle = :dot, label = "y = 0")
 
     return(fig);
 end;
@@ -433,15 +408,14 @@ end;
 #TIME EVOLUTION FUNCTIONS
 #---------------------------------------------
 
-function TimeDer(Var,X,t, margin)
+function TimeDer(params, Var)
     #Compute the time derivatives of PhiTilde, ξ and a_4. 
     #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
     #Now solved by the use of polynomial interpolation. The degree of the interpolant is completely arbitrary - lots of space for experimentation
     #But setting deg = N is bad.
-    p2 = BoundaryInterpolate(Var[1,:])[1];
-    a4 = BoundaryInterpolate(Var[5,:])[1];
-    deg = 30;
-    PhiT = zeros(T,N);
+    t, X, p2, a4 = params;
+    deg = 20;
+    PhiT = deepcopy(zero_var);
 
     DS0 = DS0f(t);
     DS1 = DS1f(t);
@@ -450,42 +424,22 @@ function TimeDer(Var,X,t, margin)
     DS4 = DS4f(t);
 
     #= Begin by computing ξ'(t) at z = zAH by demanding that the horizon stay at fixed z. =#
-    subgrid = deleteat!(copy(grid),Npts:Npts:(N-Npts));
 
-    PhiArr, SArr, SdotArr, PhidotArr, AArr = eachrow(Var);
+    PhiArr = Var[ind_phi];
+    SArr = Var[ind_s];
+    SdotArr = Var[ind_sdot];
+    PhidotArr = Var[ind_phidot];
+    AArr = Var[ind_a];
+
     VarZ,VarZZ = ComputeDerivatives(Var);
 
-    subPhiArr = deleteat!(copy(PhiArr)[:],Npts:Npts:(N-Npts));
-    subSArr = deleteat!(copy(SArr)[:],Npts:Npts:(N-Npts));
-    subSdotArr = deleteat!(copy(SdotArr)[:],Npts:Npts:(N-Npts));
-    subPhidotArr = deleteat!(copy(PhidotArr)[:],Npts:Npts:(N-Npts));
-    subAArr = deleteat!(copy(AArr)[:],Npts:Npts:(N-Npts));
-
-    Phifun = poly.fit(subgrid, subPhiArr, deg);
-    Sfun = poly.fit(subgrid, subSArr, deg);
-    Sdotfun = poly.fit(subgrid, subSdotArr, deg);
-    Phidotfun = poly.fit(subgrid, subPhidotArr, deg);
-    Afun = poly.fit(subgrid, subAArr, deg);
-
-    PhiZfun = poly.derivative(Phifun);
-    SZfun = poly.derivative(Sfun);
-    SdotZfun = poly.derivative(Sdotfun);
-    AZfun = poly.derivative(Afun);
-
-    # S = SArr[end];
-    # Sdot = SdotArr[end];
-    # SdotZ = VarZ[3,end];
-    # Phidot = PhidotArr[end];
-    # A = AArr[end];
-    # AZ = VarZ[5,end];
-
-    S = Sfun(zAH);
-    SZ = SZfun(zAH);
-    Sdot = Sdotfun(zAH);
-    SdotZ = SdotZfun(zAH);
-    Phidot = Phidotfun(zAH);
-    A = Afun(zAH);
-    AZ = AZfun(zAH);
+    S = SArr[end-1][end];
+    SZ = VarZ[ind_s][end-1][end];
+    Sdot = SdotArr[end-1][end];
+    SdotZ = VarZ[ind_sdot][end-1][end];
+    Phidot = PhidotArr[end-1][end];
+    A = AArr[end-1][end];
+    AZ = VarZ[ind_a][end-1][end];
 
     XPrime = DtX(S, SZ,Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2,t , DS0, DS1, DS2, DS3, DS4);
 
@@ -493,68 +447,79 @@ function TimeDer(Var,X,t, margin)
     #= Now compute ∂_t Φ using the definition of Φdot =#
 
 
-    for ii in 2:N
-        z = grid[ii];
+    Threads.@threads for dom in 1:Ndom
+        for pt in 1:domain_sizes[dom]
+            z = grids[dom][pt];
+            LN = (z == 0 ? -log(eps(typeof(z))) : -log(z));
+            
+            Phi = PhiArr[dom][pt];
+            PhiZ = VarZ[ind_phi][dom][pt];
+            Phidot = PhidotArr[dom][pt];
+            A = AArr[dom][pt];
+
+            PhiT[dom][pt] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t, DS0, DS1, DS2, DS3, DS4);
+        end
+    end
+
+    # Propagation matching
+    for dom in 1:Ndom-1
+        z = grids[dom][end];
         LN = -log(z);
-        
-        Phi = Phifun(z);
-        PhiZ = PhiZfun(z);
-        Phidot = Phidotfun(z);
-        A = Afun(z);
-
-        # Phi = PhiArr[ii];
-        # PhiZ = VarZ[1,ii];
-        # Phidot = PhidotArr[ii];
-        # A = AArr[ii];
-
-        PhiT[ii] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t, DS0, DS1, DS2, DS3, DS4);
+        csign = A_to_unsub(params, z, LN, [DS0, DS1, DS2, DS3, DS4], AArr[dom][end], XPrime);
+        if csign>0
+            PhiT[dom][end] = PhiT[dom+1][1];
+        else
+            PhiT[dom+1][1] = PhiT[dom][end];
+        end
     end
 
     #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
     #CHANGE - now including log terms in near boundary interpolation. 
 
-    PhiT[1] = BoundaryInterpolate(PhiT)[1];
+    PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
 
     # tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
     # PhiT[1] = tempfun(grid[1]);
 
     # Finally compute a4'(t) using the explicit formula  
 
-    a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1], t, DS0, DS1, DS2, DS3, DS4);
+    a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1][1], t, DS0, DS1, DS2, DS3, DS4);
     return XPrime, PhiT, a4Prime;
 end;
 
-function RK4(Var,X,a4, t,dt)
+function RK4(params, Var, dt)
+    t, X, p2, a4 = params;
+    
     Var0 = copy(Var);
-    Phi0 = Var0[1,1:N];
+    Phi0 = Var0[1];
     X0 = copy(X);
     a40 = copy(a4);
 
-    k1X, k1Phi, k1a4 = TimeDer(Var0, X0,t,margin);
+    k1X, k1Phi, k1a4 = TimeDer([t, X0, Phi0[1][1], a40],Var0);
 
     X1 = X0 + dt * k1X /2;
     Phi1 = Phi0 + dt * k1Phi /2;
     a41 = a40 + dt * k1a4 /2;
 
-    Var1 = ComputeBulk(Phi1, X1, a41,t + dt/2);
+    Var1 = ComputeBulkFromVec([t+dt/2, X1, Phi1[1][1], a41],Phi1);
 
-    k2X, k2Phi, k2a4 = TimeDer(Var1, X1, t + dt/2,margin);
+    k2X, k2Phi, k2a4 = TimeDer([t+dt/2, X1, Phi1[1][1], a41],Var1);
 
     X2 = X0 + dt * k2X /2;
     Phi2 = Phi0 + dt * k2Phi /2;
     a42 = a40 + dt * k2a4 /2;
 
-    Var2 = ComputeBulk(Phi2,X2,a42,t + dt/2);
+    Var2 = ComputeBulkFromVec([t+dt/2, X2, Phi2[1][1], a42],Phi2);
 
-    k3X, k3Phi, k3a4 = TimeDer(Var2, X2,t + dt/2, margin);
+    k3X, k3Phi, k3a4 = TimeDer([t+dt/2, X2, Phi2[1][1], a42],Var2);
 
     X3 = X0 + dt * k3X ;
     Phi3 = Phi0 + dt * k3Phi ;
     a43 = a40 + dt * k3a4 ;    
 
-    Var3 = ComputeBulk(Phi3,X3,a43,t+dt);
+    Var3 = ComputeBulkFromVec([t+dt, X3, Phi3[1][1], a43],Phi3);
 
-    k4X, k4Phi, k4a4 = TimeDer(Var3, X3,t + dt, margin);
+    k4X, k4Phi, k4a4 = TimeDer([t+dt, X3, Phi3[1][1], a43],Var3);
 
     kX = dt*(k1X + 2*k2X + 2*k3X +k4X)/6;
     kPhi = dt*(k1Phi + 2*k2Phi + 2*k3Phi +k4Phi)/6;
@@ -562,21 +527,23 @@ function RK4(Var,X,a4, t,dt)
 
     XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4;
 
-    VarNew = ComputeBulk(PhiNew, XNew, a4New,t+dt);
+    p2New = BoundaryInterpolate(PhiNew[1])[1];
+    param_new = [t+dt, XNew, p2New, a4New];
 
-    return VarNew, XNew, a4New
+    VarNew = ComputeBulkFromVec(param_new, PhiNew);
+
+    return param_new, VarNew
 
 end;
 
-function AB4(Var,X,a4, t,dt, OldTimeDer)
-    Var0 = copy(Var);
-    Phi0 = Var0[1,1:N];
-    X0 = copy(X);
-    a40 = copy(a4);
+function AB4(params, Var ,dt, OldTimeDer)
+    
+    t, X0, p2, a40 = params;
 
     OldF = copy(OldTimeDer);
+    Phi0 = copy(Var[1]);
 
-    k0X, k0Phi, k0a4 = TimeDer(Var0, X0,t,margin);
+    k0X, k0Phi, k0a4 = TimeDer(params,Var);
 
     k1X, k1Phi, k1a4 = OldF[3];
     k2X, k2Phi, k2a4 = OldF[2];
@@ -591,19 +558,22 @@ function AB4(Var,X,a4, t,dt, OldTimeDer)
     OldTimeDer[2] = OldF[3];
     OldTimeDer[1] = OldF[2];
 
-    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4;
+    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; 
+    p2New = BoundaryInterpolate(PhiNew[1])[1];
 
-    VarNew = ComputeBulk(PhiNew, XNew, a4New,t+dt);
 
-    return VarNew, XNew, a4New
+    param_new = [t+dt,XNew, p2New, a4New];
+    VarNew = ComputeBulkFromVec(param_new,PhiNew);
+
+    return param_new, VarNew
 end
 
-function Monitor(Var, t, X)
+function Monitor(params)
     # alpha is set to zero
     # Expressions copied from the paper, could have typos!
     beta = T(1/16);
-    p2 = Var[1,1];
-    a4 = Var[5,1];
+    
+    t, X, p2, a4 = params;
 
     DS0 = DS0f(t);
     DS1 = DS1f(t);
@@ -616,48 +586,33 @@ function Monitor(Var, t, X)
     return Eps, Mom, Op
 end
 
-function AdjustGauge(Var,X,t)
-    locX = copy(X);
-    locVar = copy(Var);
-    locp2 = locVar[1,1];
-    loca4 = locVar[5,1];
 
-    err = 1;
-
-    while err > 1.e-15;
-        locVar[2,1:N] = LinearSolveODE(locVar, 1, loca4, locX, t);
-        locVar[3,1:N] = LinearSolveODE(locVar, 2, loca4, locX, t);
-        locXnew = CorrectXi(locVar, locX, t, 10);
-        err = abs(locXnew - locX);
-        locX = locXnew;
-    end
-    NewVar = ComputeBulk(locVar[1,:],locX,loca4,t);
-    NewX = locX;
-
-    return NewVar, NewX
-end
-
-function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_io, monitor_io)
+function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
+
+    inittime, initX, initp2, inita4 = initparams;
+
+    VarCurrent = deepcopy(initVar);
+    XCurrent = copy(initX);
+    a4Current = copy(inita4);
+
 
     OldTimeDer = []; #For the AB4 integrator, need 3 past values
     OldSdot = []; OldXarr = [];#For monitoring the constraint, need 4 past values
     time = inittime;
 
-    VarCurrent = copy(initVar);
-    XCurrent = copy(initX);
-    a4Current = copy(inita4);
+    CurrentParams = copy(initparams);
 
-    Eps, Mom, Op = Monitor(VarCurrent,time, XCurrent);
+    Eps, Mom, Op = Monitor(CurrentParams);
 
 
-    out_data = Float64.(VarCurrent);
-    out_monit = vcat(Float64(inittime), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
-    write(out_io,out_data);
-    write(monitor_io, out_monit);
+    # out_data = tofloat64(VarCurrent);
+    # out_monit = vcat(Float64(inittime), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
+    # write(out_io,out_data);
+    # write(monitor_io, out_monit);
 
-    push!(OldSdot,VarCurrent[3,:])
+    push!(OldSdot,VarCurrent[ind_sdot])
     push!(OldXarr,XCurrent);
 
     counter = 0;
@@ -665,93 +620,83 @@ function Evolve(initVar, initX, inita4, inittime, maxtime, dt, write_out ,out_io
     prog = ProgressUnknown(desc = "Starting the evolution", spinner = true)
 
     #First couple of steps to set up later AB4
-    for ii in 1:3
+    while time<maxtime
 
-        VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, 0);
+        CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
 
         time = time+dt;
         counter += 1; 
 
-        push!(OldTimeDer, TimeDer(VarCurrent, XCurrent, time, 10));
-        push!(OldSdot,VarCurrent[3,:])
-        push!(OldXarr,XCurrent);
+        # push!(OldTimeDer, TimeDer(CurrentParams,VarCurrent));
+        # push!(OldSdot,VarCurrent[ind_sdot])
+        # push!(OldXarr,XCurrent);
+        if counter == write_out
+            push!(out_io, VarCurrent);
+            push!(monitor_io,[time,CurrentParams[ind_X]]);
+            counter = 0;
+        end
+
 
         # testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
         next!(prog, desc = string("t = ",format(time, precision=3)#=,",  Sdot at zAH = ", format(testsdot, precision=3)=#))
 
-        if counter == write_out
-            Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
+        # if counter == write_out
+        #     Eps, Mom, Op = Monitor(CurrentParams)
 
-            out_data = Float64.(VarCurrent);
-            out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
-            write(out_io,out_data);
-            write(monitor_io, out_monit);
+        #     out_data = tofloat64(VarCurrent);
+        #     out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
+        #     write(out_io,out_data);
+        #     write(monitor_io, out_monit);
 
-            counter = 0;
-        end
-
-    end
-
-    while time<maxtime
-
-        VarCurrent, XCurrent, a4Current = AB4(VarCurrent, XCurrent, a4Current, time, dt, OldTimeDer);
-        #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
-
-        time = time+dt;
-        counter += 1; 
-
-        constr_arr = EvaluateConstraint(VarCurrent,XCurrent,OldSdot,OldXarr,time,dt);
-        constr_norm = linalg.norm(constr_arr);
-
-        # testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
-
-        # if abs(testsdot)>.00004
-        #     VarOld, XOld = AdjustGauge(VarOld,XOld,time);
-        #     testsdot = UnSubSdot(VarOld[3,end],XOld,zAH,time);
+        #     counter = 0;
         # end
 
-        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
+    end
+
+    # while time<maxtime
+
+    #     CurrentParams, VarCurrent = AB4(CurrentParams, VarCurrent, dt, OldTimeDer);
+    #     #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
+
+    #     time = time+dt;
+    #     counter += 1; 
+
+    #     constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
+    #     constr_norm = linalg.norm(constr_arr);
+
+    #     next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
 
     
-        if counter == write_out
-            Eps, Mom, Op = Monitor(VarCurrent, time, XCurrent)
+    #     if counter == write_out
+    #         Eps, Mom, Op = Monitor(CurrentParams)
 
-            out_data = Float64.(VarCurrent);
-            out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
-            write(out_io,out_data);
-            write(monitor_io, out_monit);
+    #         # out_data = tofloat64(VarCurrent);
+    #         # out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
+    #         # write(out_io,out_data);
+    #         # write(monitor_io, out_monit);
 
-            flush(out_io);
-            flush(monitor_io);
+    #         # flush(out_io);
+    #         # flush(monitor_io);
 
-            counter = 0;
-        end
-    end
+    #         counter = 0;
+    #     end
+    # end
 
     return VarCurrent, XCurrent, a4Current;
 end
 
-function BoundaryInterpolate(VarVec)
-    # Take the near - boundary points in the given variable and fit a model, including some logarithmic terms, to extract the FG expansion coefficients
-    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z) .* z .^2 .+ p[6] .* log.(z) .* z .^3;
-
-    zdata = grid[2:7];
-    ydata = VarVec[2:7];
-
-    p0 = [VarVec[2], 0., 0., 0. , 0., 0.];
-    fit = lsq.curve_fit(model, zdata, ydata, p0);
-    params = lsq.coef(fit);
-    return params
-end
 
 function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
     res = (3*a4 - 16*a3 + 36*a2 - 48*a1 + 25*a0) / (12 * dt);
     return res
 end
 
-function EvaluateConstraint(Var, X, previous_sdot_arr_arg, previous_x_arr_arg, t, dt)
+function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_arg, dt)
     previous_x_arr = copy(previous_x_arr_arg);
     previous_sdot_arr = copy(previous_sdot_arr_arg);
+
+    t, X, p2, a4 = params;
+
 
     DS0 = DS0f(t);
     DS1 = DS1f(t);
@@ -760,28 +705,32 @@ function EvaluateConstraint(Var, X, previous_sdot_arr_arg, previous_x_arr_arg, t
     DS4 = DS4f(t);
 
     VarZ, VarZZ = ComputeDerivatives(Var);
-    res = zeros(T,N);
-    p2 = BoundaryInterpolate(Var[1,:])[1];
-    a4 = BoundaryInterpolate(Var[5,:])[1];
-        
+    res = copy(zero_var);
+
     XPrime = BackwardsTimeDerivative(previous_x_arr[1],previous_x_arr[2],previous_x_arr[3],previous_x_arr[4],X,dt)
 
-    for ii in 2:N
-        Phi, S, Sdot, Phidot, A = Var[1:NVar,ii];
-        PhiZ, SZ, SdotZ, PhidotZ, AZ = VarZ[1:NVar,ii]
-        PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = VarZZ[1:NVar,ii];
-        z = grid[ii]; LN = -T(log(z));
-        SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][ii],previous_sdot_arr[2][ii],previous_sdot_arr[3][ii],previous_sdot_arr[4][ii],Var[3,ii],dt);
+    
 
-        res[ii] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT, DS0,DS1,DS2,DS3,DS4);
+    for dom in 1:Ndom
+        for pt in 1:domain_sizes[dom]
+            Phi, S, Sdot, Phidot, A = [var[dom][pt] for var in Var];
+            PhiZ, SZ, SdotZ, PhidotZ, AZ = [var[dom][pt] for var in VarZ];
+            PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = [var[dom][pt] for var in VarZZ];
+            z = grids[dom][pt]; LN = (z == 0 ? -log(eps(typeof(z))) : -log(z) );
+
+            SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][dom][pt],previous_sdot_arr[2][dom][pt],previous_sdot_arr[3][dom][pt],previous_sdot_arr[4][dom][pt],Var[ind_sdot][dom][pt],dt);
+
+            res[dom][pt] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT, DS0,DS1,DS2,DS3,DS4);
+        end
     end
 
-    res[1] = BoundaryInterpolate(res)[1];
+    res[1][1] = BoundaryInterpolate(res[1])[1];
+
 
     previous_sdot_arr_arg[1] = previous_sdot_arr[2];
     previous_sdot_arr_arg[2] = previous_sdot_arr[3];
     previous_sdot_arr_arg[3] = previous_sdot_arr[4];
-    previous_sdot_arr_arg[4] = Var[3,:];
+    previous_sdot_arr_arg[4] = Var[ind_sdot];
 
     previous_x_arr_arg[1] = previous_x_arr[2];
     previous_x_arr_arg[2] = previous_x_arr[3];
@@ -799,5 +748,19 @@ S = sub_value;
 DS0, DS1, DS2, DS3, DS4 = DSVals;
 
 unsub_value = (z^5*(3*DS1^4*(199 - 90*LN)*LN*M^2 - 9*DS0*DS1^2*LN*M^2*(3*DS2*(53 + 20*LN) + 100*DS1*(-4*X + z^(-1))) + DS0^2*LN*M*(6*DS2^2*(247 - 45*LN)*M + 15*DS1*M*(47*DS3 + 84*DS2*(-4*X + z^(-1))) + 20*DS1^2*(23*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 -(135*M*X)/z)) + (1800*DS0^4*(3 - M^2*z^2 + X*z*(3 + M^2*z^2)))/z^6 +5*DS0^3*(LN*M*(75*DS4*M + 144*DS3*M*(-4*X + z^(-1)) + 4*DS2*(28*M^3 +54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) - (120*DS1*(-9 +M^2*z^2))/z^5 + (1080*S)/z^2)))/(5400*DS0^3);
+
+return unsub_value
+
+end
+
+function A_to_unsub(params, z, LN, DSVals, sub_value, XPrime)
+
+t, X, p2, a4 = params;
+A = sub_value;
+DS0, DS1, DS2, DS3, DS4 = DSVals;
+
+unsub_value = (z^3*(DS0*(DS3*LN*M^2 + DS2*(-4*LN*M^2*X - 6/z^3 + (2*LN*M^2)/z)) + DS1*(-(DS2*LN*M^2) + (3*DS1)/z^3) + (DS0^2*(3 + 6*X*z - 2*M^2*z^2 + 3*X^2*z^2 - 6*XPrime*z^2 + 3*A*z^4))/z^5))/(3*DS0^2);
+
+return unsub_value
 
 end
