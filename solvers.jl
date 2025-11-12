@@ -25,7 +25,7 @@ global const int_p2 = 3;
 global const int_a4 = 4;
 
 global const NVar = 5;
-global const DConst = T(10);
+global const DConst = 20;
 
 Power(x,y) = x^y;
 
@@ -197,7 +197,7 @@ function DomainMatching(EqNum, degree, solParticular, solHomogeneous, solHomogen
     #Domain matching. We have 4 possibilities: degree = 1 or 2, regular singular point = true or false. Annoyingly the 4 equations in the system satiate these.
     #Now moved dealing with the BCs to the matrix expressions themselves.
 
-    sol = copy(zero_var);
+    sol = deepcopy(zero_var);
 
     if degree == 1 #In the nth subdomain, the solution is given as y_particular + c_n * y_homogeneous
         coeffMat = zeros(T,Ndom,Ndom);
@@ -274,11 +274,11 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
     # This routine can now handle the case where zmin = 0. But that might still be bad for stability.
     degree = degreelist[EqNum];
 
-    sol = copy(zero_var);
-    solParticular = copy(zero_var);
-    solHomogeneous = copy(zero_var);
+    sol = deepcopy(zero_var);
+    solParticular = deepcopy(zero_var);
+    solHomogeneous = deepcopy(zero_var);
     if degree == 2 
-        solHomogeneous2 = copy(zero_var);
+        solHomogeneous2 = deepcopy(zero_var);
     end
 
     # srcPrescribed = zero(T);
@@ -370,7 +370,7 @@ function CorrectXi(params, Var)
 
     flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
     flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
-    Sdot_unsub = [S_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in 1:length(flatgrid)];
+    Sdot_unsub = [Sdot_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in eachindex(flatgrid)];
 
 
     # This interpolation degree is arbitrary!!
@@ -391,7 +391,7 @@ function PlotSdot(params, Var)
     
     flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
     flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
-    Sdot_unsub = [S_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in 1:length(flatgrid)];
+    Sdot_unsub = [Sdot_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in eachindex(flatgrid)];
 
     interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
     foo(x,p) = interpolant(x);
@@ -412,10 +412,8 @@ end;
 function TimeDer(params, Var)
     #Compute the time derivatives of PhiTilde, ξ and a_4. 
     #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
-    #Now solved by the use of polynomial interpolation. The degree of the interpolant is completely arbitrary - lots of space for experimentation
-    #But setting deg = N is bad.
+    #Now solved by the correct treatment of junction points, as detailed in the Jecco paper. 
     t, X, p2, a4 = params;
-    deg = 20;
     PhiT = deepcopy(zero_var);
 
     DS0 = DS0f(t);
@@ -425,45 +423,43 @@ function TimeDer(params, Var)
     DS4 = DS4f(t);
 
     #= Begin by computing ξ'(t) at z = zAH by demanding that the horizon stay at fixed z. =#
-
-    PhiArr = Var[ind_phi];
-    SArr = Var[ind_s];
-    SdotArr = Var[ind_sdot];
-    PhidotArr = Var[ind_phidot];
     AArr = Var[ind_a];
 
     VarZ,VarZZ = ComputeDerivatives(Var);
 
-    S = SArr[end-1][end];
-    SZ = VarZ[ind_s][end-1][end];
-    Sdot = SdotArr[end-1][end];
-    SdotZ = VarZ[ind_sdot][end-1][end];
-    Phidot = PhidotArr[end-1][end];
-    A = AArr[end-1][end];
-    AZ = VarZ[ind_a][end-1][end];
+    valsAH   =  [x[domAH][indAH] for x in Var];
+    valsZAH  =  [x[domAH][indAH] for x in VarZ];
+    valsZZAH =  [x[domAH][indAH] for x in VarZZ];
+    pdevars = PDEVars(valsAH..., valsZAH..., valsZZAH..., zAH, -log(zAH), t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
 
-    XPrime = DtX(S, SZ,Sdot,SdotZ, Phidot, A, AZ, zAH, -log(zAH), X, p2,t , DS0, DS1, DS2, DS3, DS4);
+    XPrime = DtX(pdevars);
 
 
     #= Now compute ∂_t Φ using the definition of Φdot =#
 
 
-    Threads.@threads for dom in 1:Ndom
-        for pt in 1:domain_sizes[dom]
-            z = grids[dom][pt];
-            LN = (z == 0 ? -log(eps(typeof(z))) : -log(z));
-            
-            Phi = PhiArr[dom][pt];
-            PhiZ = VarZ[ind_phi][dom][pt];
-            Phidot = PhidotArr[dom][pt];
-            A = AArr[dom][pt];
+    Threads.@threads for domind in 1:Ndom
+        for ptind in 1:domain_sizes[domind]
 
-            PhiT[dom][pt] = DtPhi(Phi, PhiZ, Phidot, A, z, LN, X, XPrime, t, DS0, DS1, DS2, DS3, DS4);
+            vals   =  [x[domind][ptind] for x in Var];
+            valsZ  =  [x[domind][ptind] for x in VarZ];
+            valsZZ =  [x[domind][ptind] for x in VarZZ];
+
+            z = grids[domind][ptind]
+            LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
+
+            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+
+            PhiT[domind][ptind] = DtPhi(XPrime, pdevars);
         end
+
     end
 
-    PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
+    PhiT[1] = cheb_filter(PhiT[1]);
 
+    # Including log terms in near boundary interpolation. 
+
+    # PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
 
     # Propagation matching
     for dom in 1:Ndom-1
@@ -476,16 +472,9 @@ function TimeDer(params, Var)
             PhiT[dom+1][1] = PhiT[dom][end];
         end
     end
-
-    #Use a polynomial fit to extend to the origin, otherwise get bad behaviour - place for a fix?
-    #CHANGE - now including log terms in near boundary interpolation. 
-
-    # tempfun = poly.fit(grid[2:15],PhiT[2:15],10);
-    # PhiT[1] = tempfun(grid[1]);
-
     # Finally compute a4'(t) using the explicit formula  
 
-    a4Prime = Dta4(X, a4, p2, XPrime, PhiT[1][1], t, DS0, DS1, DS2, DS3, DS4);
+    a4Prime = Dta4(params, [DS0, DS1, DS2, DS3, DS4], XPrime, PhiT[1][1]);
     return XPrime, PhiT, a4Prime;
 end;
 
@@ -588,7 +577,6 @@ function Monitor(params)
     return Eps, Mom, Op
 end
 
-
 function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
@@ -608,6 +596,9 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
 
     Eps, Mom, Op = Monitor(CurrentParams);
 
+    push!(out_io, VarCurrent);
+    push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op,0]);
+
 
     # out_data = tofloat64(VarCurrent);
     # out_monit = vcat(Float64(inittime), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(0.));
@@ -621,7 +612,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
 
     prog = ProgressUnknown(desc = "Starting the evolution", spinner = true)
 
-    #First couple of steps to set up later AB4
+    # First couple of steps to set up later AB4
     for ii in 1:3
 
         CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
@@ -634,7 +625,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         push!(OldXarr,XCurrent);
         if counter == write_out
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams[ind_X]]);
+            push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op,0]);
             counter = 0;
         end
 
@@ -658,7 +649,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     while time<maxtime
 
         CurrentParams, VarCurrent = AB4(CurrentParams, VarCurrent, dt, OldTimeDer);
-        #VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
+        # VarCurrent, XCurrent, a4Current = RK4(VarCurrent, XCurrent, a4Current, time, dt, Int32(0));
 
         time = time+dt;
         counter += 1; 
@@ -666,13 +657,17 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
         constr_norm = linalg.norm(constr_arr);
 
-        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3))) 
+
+        testsdot = Sdot_to_unsub(CurrentParams, zAH, -log(zAH), [DS0f(time),DS1f(time),DS2f(time),DS3f(time),DS4f(time)], VarCurrent[ind_sdot][domAH][indAH]);
+
+        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3),",  Sdot at zAH = ", format(testsdot, precision=3)));
 
     
         if counter == write_out
             Eps, Mom, Op = Monitor(CurrentParams)
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams[ind_X]]);
+            push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op, testsdot]);
+
 
             # out_data = tofloat64(VarCurrent);
             # out_monit = vcat(Float64(time), Float64(XCurrent), Float64(a4Current),Float64(Eps),Float64(Mom),Float64(Op),Float64(constr_norm));
@@ -686,15 +681,18 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         end
     end
 
-    return VarCurrent, XCurrent, a4Current;
+    return CurrentParams, VarCurrent;
 end
-
 
 function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
     res = (3*a4 - 16*a3 + 36*a2 - 48*a1 + 25*a0) / (12 * dt);
     return res
 end
 
+
+"""
+EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_arg, dt)
+"""
 function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_arg, dt)
     previous_x_arr = copy(previous_x_arr_arg);
     previous_sdot_arr = copy(previous_sdot_arr_arg);
@@ -744,16 +742,14 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
     return res
 end
 
-
-function S_to_unsub(params, z, LN, DSVals, sub_value)
+function Sdot_to_unsub(params, z, LN, DSVals, sub_value)
 
     t, X, p2, a4 = params;
-    S = sub_value;
+    Sdot = sub_value;
 
     DS0, DS1, DS2, DS3, DS4 = DSVals;
 
-    unsub_value = (z^5*(3*DS1^4*(199 - 90*LN)*LN*M^2 - 9*DS0*DS1^2*LN*M^2*(3*DS2*(53 + 20*LN) + 100*DS1*(-4*X + z^(-1))) + DS0^2*LN*M*(6*DS2^2*(247 - 45*LN)*M + 15*DS1*M*(47*DS3 + 84*DS2*(-4*X + z^(-1))) + 20*DS1^2*(23*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 -(135*M*X)/z)) + (1800*DS0^4*(3 - M^2*z^2 + X*z*(3 + M^2*z^2)))/z^6 +5*DS0^3*(LN*M*(75*DS4*M + 144*DS3*M*(-4*X + z^(-1)) + 4*DS2*(28*M^3 +54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) - (120*DS1*(-9 +M^2*z^2))/z^5 + (1080*S)/z^2)))/(5400*DS0^3);
-
+    unsub_value = (30*DS1^3*LN*M^2*z^5 - 30*DS0^3*(-3 - 6*X*z + M^2*z^2 - 3*X^2*z^2) + 9*DS0*DS1*z^2*(-6*DS2*LN*M^2*z^3 + 5*DS1*(2 - LN*M^2*z^2 + 2*LN*M^2*X*z^3)) + DS0^2*z*(-20*DS1*(-9 - 9*X*z + 2*M^2*z^2) + 3*LN*M^2*z^3*(4*DS3*z + DS2*(5 - 10*X*z)) + 180*z^3*Sdot))/(180*DS0^2*z^2);
     return unsub_value
 
 end
@@ -770,9 +766,14 @@ function A_to_unsub(params, z, LN, DSVals, sub_value, XPrime)
 
 end
 
+"""
+cheb_filter(f::Vector{T})
+Attempt at implementing a high-frequency filter.
+"""
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
-    alpha = 36.0437;
+    # alpha = 36.0437;
+    alpha = 1000;
     # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 
