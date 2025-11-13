@@ -21,8 +21,9 @@ global const ind_a      = 5;
 
 global const ind_t  = 1;
 global const ind_X  = 2;
-global const int_p2 = 3;
-global const int_a4 = 4;
+global const ind_p2 = 3;
+global const ind_a4 = 4;
+global const ind_S0 = 5;
 
 global const NVar = 5;
 global const DConst = 20;
@@ -104,12 +105,12 @@ end
 
 function BoundaryInterpolate(VarVec)
     # Take the near - boundary points in the given variable and fit a model, including some logarithmic terms, to extract the FG expansion coefficients
-    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z) .* z .+ p[6] .* log.(z) .* z .^2;
+    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z .+eps(T)) .* z .+ p[6] .* log.(z .+eps(T)) .* z .^2;
 
-    zdata = grids[1][2:7];
-    ydata = VarVec[2:7];
+    zdata = grids[1][1:7];
+    ydata = VarVec[1:7];
 
-    p0 = [VarVec[2], 0., 0., 0. , 0., 0.];
+    p0 = [VarVec[1], 0., 0., 0. , 0., 0.];
     fit = lsq.curve_fit(model, zdata, ydata, p0);
     params = lsq.coef(fit);
     return params
@@ -119,7 +120,7 @@ end
 #ODE SOLVER FUNCTIONS
 #---------------------------------------------
 
-function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
+function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3,p4)
     #Compute the matrix for one of the ODEs, so that it can be written as mat * vec = src.
     #Working in a given domain "domind"
     #Not dealing with boundary conditions here.
@@ -127,7 +128,7 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
     degree = degreelist[EqNum];
     var = varnamelist[EqNum];
 
-    t, X, p2, a4 = params;
+    t, X, p2, a4, DS0 = params;
     Npts = domain_sizes[domind];
 
     # srcPrescribed = zero(T);
@@ -150,11 +151,10 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ)
 
     mat = Matrix{T}(undef,Npts,Npts)
 
-    DS0 = DS0f(t);
-    DS1 = DS1f(t);
-    DS2 = DS2f(t);
-    DS3 = DS3f(t);
-    DS4 = DS4f(t);
+    DS1 = DS1f(params);
+    DS2 = DS2f(params, DS1, p3, p4);
+    DS3 = DS3f(params, DS1, p3, p4);
+    DS4 = DS4f(params, DS1, p3, p4);
 
     for ptind in 1:Npts
         vals   =  [x[domind][ptind] for x in Var];
@@ -281,6 +281,8 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
         solHomogeneous2 = deepcopy(zero_var);
     end
 
+    p3, p4 = BoundaryInterpolate(Var[1][1])[2:3];
+
     # srcPrescribed = zero(T);
 
     #Basic parallelization here:
@@ -288,7 +290,7 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
         Npts = domain_sizes[domind];
 
         
-        mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ);
+        mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3, p4);
 
         HomoSRCVec = zeros(T, Npts);
         HomoSRCVec[1] = 1;
@@ -363,10 +365,12 @@ end
 function CorrectXi(params, Var)
     # One step in the procedure to fix ξ such that the apparent horizon is at zAH
     # Needs to be iterated over
-
-    t = params[ind_t];
     Xnew = copy(params[ind_X]);
-    DSVals = [DS0f(t), DS1f(t), DS2f(t), DS3f(t), DS4f(t)];
+    DS0 = copy(params[ind_S0]);
+
+    p3, p4 = BoundaryInterpolate(Var[1][1])[2:3];
+    DS1 = DS1f(params)
+    DSVals = [DS0, DS1, DS2f(params, DS1, p3, p4), DS3f(params, DS1, p3, p4), DS4f(params, DS1, p3, p4)];
 
     flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
     flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
@@ -386,8 +390,10 @@ end;
 
 function PlotSdot(params, Var)
 
-    t = params[ind_t];
-    DSVals = [DS0f(t), DS1f(t), DS2f(t), DS3f(t), DS4f(t)];
+    p3, p4 = BoundaryInterpolate(Var[1][1])[2:3];
+    DS0 = copy(params[ind_S0]);
+    DS1 = DS1f(params)
+    DSVals = [DS0, DS1, DS2f(params, DS1, p3, p4), DS3f(params, DS1, p3, p4), DS4f(params, DS1, p3, p4)];
     
     flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
     flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
@@ -413,14 +419,15 @@ function TimeDer(params, Var)
     #Compute the time derivatives of PhiTilde, ξ and a_4. 
     #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
     #Now solved by the correct treatment of junction points, as detailed in the Jecco paper. 
-    t, X, p2, a4 = params;
+    t, X, p2, a4, DS0 = params;
+    p3, p4 = BoundaryInterpolate(Var[1][1])[2:3];
+
     PhiT = deepcopy(zero_var);
 
-    DS0 = DS0f(t);
-    DS1 = DS1f(t);
-    DS2 = DS2f(t);
-    DS3 = DS3f(t);
-    DS4 = DS4f(t);
+    DS1 = DS1f(params);
+    DS2 = DS2f(params, DS1, p3, p4);
+    DS3 = DS3f(params, DS1, p3, p4);
+    DS4 = DS4f(params, DS1, p3, p4);
 
     #= Begin by computing ξ'(t) at z = zAH by demanding that the horizon stay at fixed z. =#
     AArr = Var[ind_a];
@@ -475,51 +482,55 @@ function TimeDer(params, Var)
     # Finally compute a4'(t) using the explicit formula  
 
     a4Prime = Dta4(params, [DS0, DS1, DS2, DS3, DS4], XPrime, PhiT[1][1]);
-    return XPrime, PhiT, a4Prime;
+    return XPrime, PhiT, a4Prime, DS1;
 end;
 
 function RK4(params, Var, dt)
-    t, X, p2, a4 = params;
+    t, X, p2, a4, DS0 = params;
     
     Var0 = copy(Var);
     Phi0 = Var0[1];
     X0 = copy(X);
     a40 = copy(a4);
 
-    k1X, k1Phi, k1a4 = TimeDer([t, X0, Phi0[1][1], a40],Var0);
+    k1X, k1Phi, k1a4, k1S0 = TimeDer([t, X0, Phi0[1][1], a40, DS0],Var0);
 
     X1 = X0 + dt * k1X /2;
     Phi1 = Phi0 + dt * k1Phi /2;
     a41 = a40 + dt * k1a4 /2;
+    DS01 = DS0 + dt * k1S0/2;
 
-    Var1 = ComputeBulkFromVec([t+dt/2, X1, Phi1[1][1], a41],Phi1);
+    Var1 = ComputeBulkFromVec([t+dt/2, X1, Phi1[1][1], a41, DS01],Phi1);
 
-    k2X, k2Phi, k2a4 = TimeDer([t+dt/2, X1, Phi1[1][1], a41],Var1);
+    k2X, k2Phi, k2a4, k2S0 = TimeDer([t+dt/2, X1, Phi1[1][1], a41, DS01],Var1);
 
     X2 = X0 + dt * k2X /2;
     Phi2 = Phi0 + dt * k2Phi /2;
     a42 = a40 + dt * k2a4 /2;
+    DS02 = DS0 + dt * k2S0 /2;
 
-    Var2 = ComputeBulkFromVec([t+dt/2, X2, Phi2[1][1], a42],Phi2);
+    Var2 = ComputeBulkFromVec([t+dt/2, X2, Phi2[1][1], a42, DS02],Phi2);
 
-    k3X, k3Phi, k3a4 = TimeDer([t+dt/2, X2, Phi2[1][1], a42],Var2);
+    k3X, k3Phi, k3a4, k3S0 = TimeDer([t+dt/2, X2, Phi2[1][1], a42, DS02],Var2);
 
     X3 = X0 + dt * k3X ;
     Phi3 = Phi0 + dt * k3Phi ;
     a43 = a40 + dt * k3a4 ;    
+    DS03 = DS0 + dt*k3S0;
 
-    Var3 = ComputeBulkFromVec([t+dt, X3, Phi3[1][1], a43],Phi3);
+    Var3 = ComputeBulkFromVec([t+dt, X3, Phi3[1][1], a43, DS03],Phi3);
 
-    k4X, k4Phi, k4a4 = TimeDer([t+dt, X3, Phi3[1][1], a43],Var3);
+    k4X, k4Phi, k4a4, k4S0 = TimeDer([t+dt, X3, Phi3[1][1], a43, DS0],Var3);
 
     kX = dt*(k1X + 2*k2X + 2*k3X +k4X)/6;
     kPhi = dt*(k1Phi + 2*k2Phi + 2*k3Phi +k4Phi)/6;
     ka4 = dt*(k1a4 + 2*k2a4 + 2*k3a4 +k4a4)/6;
+    kS04 = dt*(k1S0 + 2*k2S0 + 2*k3S0 + k4S0)/6;
 
-    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4;
+    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; DS0New = DS0 + kS04;
 
     p2New = BoundaryInterpolate(PhiNew[1])[1];
-    param_new = [t+dt, XNew, p2New, a4New];
+    param_new = [t+dt, XNew, p2New, a4New, DS0New];
 
     VarNew = ComputeBulkFromVec(param_new, PhiNew);
 
@@ -529,31 +540,32 @@ end;
 
 function AB4(params, Var ,dt, OldTimeDer)
     
-    t, X0, p2, a40 = params;
+    t, X0, p2, a40, DS0 = params;
 
     OldF = deepcopy(OldTimeDer);
     Phi0 = deepcopy(Var[1]);
 
-    k0X, k0Phi, k0a4 = TimeDer(params,Var);
+    k0X, k0Phi, k0a4, k0S0 = TimeDer(params,Var);
 
-    k1X, k1Phi, k1a4 = OldF[3];
-    k2X, k2Phi, k2a4 = OldF[2];
-    k3X, k3Phi, k3a4 = OldF[1];
+    k1X, k1Phi, k1a4, k1S0 = OldF[3];
+    k2X, k2Phi, k2a4, k2S0 = OldF[2];
+    k3X, k3Phi, k3a4, k3S0 = OldF[1];
 
     kX = dt * (55 * k0X - 59 * k1X + 37 * k2X - 9 * k3X) / 24;
     kPhi = dt * (55 * k0Phi - 59 * k1Phi + 37 * k2Phi - 9 * k3Phi) / 24;
     ka4 = dt * (55 * k0a4 - 59 * k1a4 + 37 * k2a4 - 9 * k3a4) / 24;
+    kS0 = dt * (55 * k0S0 - 59 * k1S0 + 37 * k2S0 - 9 * k3S0) / 24;
 
 
-    OldTimeDer[3] = [k0X, k0Phi, k0a4];
+    OldTimeDer[3] = [k0X, k0Phi, k0a4, k0S0];
     OldTimeDer[2] = OldF[3];
     OldTimeDer[1] = OldF[2];
 
-    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; 
+    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; DS0New = DS0 + kS0;
     p2New = PhiNew[1][1];
 
 
-    param_new = [t+dt,XNew, p2New, a4New];
+    param_new = [t+dt,XNew, p2New, a4New, DS0New];
     VarNew = ComputeBulkFromVec(param_new,PhiNew);
 
     return param_new, VarNew
@@ -564,11 +576,10 @@ function Monitor(params)
     # Expressions copied from the paper, could have typos!
     beta = T(1/16);
     
-    t, X, p2, a4 = params;
+    t, X, p2, a4, DS0 = params;
 
-    DS0 = DS0f(t);
-    DS1 = DS1f(t);
-    DS2 = DS2f(t);
+    DS1 = DS1f(params);
+    DS2 = DS2f(params, DS1, 0,0);
 
     Eps = -3*a4/4 - M*p2 + M^2 * X^2 - M^4 * (beta - T(7/36))+3*DS1^4/(16*DS0^4) + M^2*(DS1^2 / (8*DS0^2) + 2*DS2/(3*DS0));
     Mom = -a4/4 + M * p2/3 - M^2 * X^2 /3 +M^4 * (beta - T(5/108)) + DS1^2 * (DS1^2 - 4*DS0*DS2)/(16*DS0^4) - (M^2/3)*(DS1^2/(8*DS0^2)+13*DS2/(12*DS0));
@@ -581,7 +592,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
 
-    inittime, initX, initp2, inita4 = initparams;
+    inittime, initX, initp2, inita4, initDS0 = initparams;
 
     VarCurrent = deepcopy(initVar);
     XCurrent = copy(initX);
@@ -597,7 +608,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     Eps, Mom, Op = Monitor(CurrentParams);
 
     push!(out_io, VarCurrent);
-    push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op,0]);
+    push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,0]);
 
 
     # out_data = tofloat64(VarCurrent);
@@ -625,7 +636,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         push!(OldXarr,XCurrent);
         if counter == write_out
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op,0]);
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,0]);
             counter = 0;
         end
 
@@ -657,8 +668,15 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
         constr_norm = linalg.norm(constr_arr);
 
+        p3, p4 = BoundaryInterpolate(VarCurrent[1][1])[2:3];
 
-        testsdot = Sdot_to_unsub(CurrentParams, zAH, -log(zAH), [DS0f(time),DS1f(time),DS2f(time),DS3f(time),DS4f(time)], VarCurrent[ind_sdot][domAH][indAH]);
+        DS0 = CurrentParams[ind_S0]
+        DS1 = DS1f(CurrentParams);
+        DS2 = DS2f(CurrentParams, DS1, p3, p4);
+        DS3 = DS3f(CurrentParams, DS1, p3, p4);
+        DS4 = DS4f(CurrentParams, DS1, p3, p4);
+
+        testsdot = Sdot_to_unsub(CurrentParams, zAH, -log(zAH), [DS0, DS1, DS2, DS3, DS4], VarCurrent[ind_sdot][domAH][indAH]);
 
         next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3),",  Sdot at zAH = ", format(testsdot, precision=3)));
 
@@ -666,7 +684,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         if counter == write_out
             Eps, Mom, Op = Monitor(CurrentParams)
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams[ind_X],Eps,Mom,Op, testsdot]);
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op, testsdot]);
 
 
             # out_data = tofloat64(VarCurrent);
@@ -697,14 +715,13 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
     previous_x_arr = copy(previous_x_arr_arg);
     previous_sdot_arr = copy(previous_sdot_arr_arg);
 
-    t, X, p2, a4 = params;
+    t, X, p2, a4, DS0 = params;
+    p3,p4 = BoundaryInterpolate(Var[1][1])[2:3];
 
-
-    DS0 = DS0f(t);
-    DS1 = DS1f(t);
-    DS2 = DS2f(t);
-    DS3 = DS3f(t);
-    DS4 = DS4f(t);
+    DS1 = DS1f(params);
+    DS2 = DS2f(params, DS1, p3, p4);
+    DS3 = DS3f(params, DS1, p3, p4);
+    DS4 = DS4f(params, DS1, p3, p4);
 
     VarZ, VarZZ = ComputeDerivatives(Var);
     res = copy(zero_var);
@@ -772,8 +789,8 @@ Attempt at implementing a high-frequency filter.
 """
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
-    alpha = 36.0437;
-    # alpha = 100;
+    # alpha = 36.0437;
+    alpha = 1000;
     # # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 

@@ -16,45 +16,30 @@ res = T(1);
 return res;
 end
 
-function DS1f(t)
+function DS1f(params)
 
 res = T(0); 
 
 return res;
 end
 
-function DS2f(t)
+function DS2f(params, DS1, p3, p4)
 
 res = T(0); 
 
 return res;
 end
 
-function DS3f(t)
+function DS3f(params, DS1, p3, p4)
 
 res = T(0); 
 
 return res;
 end
 
-function DS4f(t)
+function DS4f(params, DS1, p3, p4)
 
 res = T(0); 
 
 return res;
 end
-
-function DS5f(t)
-
-res = T(0); 
-
-return res;
-end
-
-function DS6f(t)
-
-res = T(0); 
-
-return res;
-end
-
