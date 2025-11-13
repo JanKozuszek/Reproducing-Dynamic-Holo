@@ -453,9 +453,9 @@ function TimeDer(params, Var)
             PhiT[domind][ptind] = DtPhi(XPrime, pdevars);
         end
 
+        PhiT[domind] = cheb_filter(PhiT[domind]);
     end
 
-    PhiT[1] = cheb_filter(PhiT[1]);
 
     # Including log terms in near boundary interpolation. 
 
@@ -550,7 +550,7 @@ function AB4(params, Var ,dt, OldTimeDer)
     OldTimeDer[1] = OldF[2];
 
     XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; 
-    p2New = BoundaryInterpolate(PhiNew[1])[1];
+    p2New = PhiNew[1][1];
 
 
     param_new = [t+dt,XNew, p2New, a4New];
@@ -726,7 +726,7 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
         end
     end
 
-    res[1][1] = BoundaryInterpolate(res[1])[1];
+    res[1][1] = 0;
 
 
     previous_sdot_arr_arg[1] = previous_sdot_arr[2];
@@ -772,9 +772,9 @@ Attempt at implementing a high-frequency filter.
 """
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
-    # alpha = 36.0437;
-    alpha = 1000;
-    # Transform to Chebyshev coefficients using DCT-I
+    alpha = 36.0437;
+    # alpha = 100;
+    # # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 
     # Construct modal filter
