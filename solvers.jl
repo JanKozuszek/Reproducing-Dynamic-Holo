@@ -606,9 +606,10 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     CurrentParams = copy(initparams);
 
     Eps, Mom, Op = Monitor(CurrentParams);
+    DS1 = DS1f(CurrentParams);
 
     push!(out_io, VarCurrent);
-    push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,0]);
+    push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,DS1]);
 
 
     # out_data = tofloat64(VarCurrent);
@@ -627,6 +628,8 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     for ii in 1:3
 
         CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
+        DS1 = DS1f(CurrentParams);
+
 
         time = time+dt;
         counter += 1; 
@@ -636,7 +639,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         push!(OldXarr,XCurrent);
         if counter == write_out
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,0]);
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,DS1]);
             counter = 0;
         end
 
@@ -665,8 +668,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         time = time+dt;
         counter += 1; 
 
-        constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
-        constr_norm = linalg.norm(constr_arr);
+        constr_norm= EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
 
         p3, p4 = BoundaryInterpolate(VarCurrent[1][1])[2:3];
 
@@ -684,7 +686,7 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
         if counter == write_out
             Eps, Mom, Op = Monitor(CurrentParams)
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op, testsdot]);
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op, DS1]);
 
 
             # out_data = tofloat64(VarCurrent);
@@ -730,19 +732,22 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
 
     
 
-    for dom in 1:Ndom
-        for pt in 1:domain_sizes[dom]
-            Phi, S, Sdot, Phidot, A = [var[dom][pt] for var in Var];
-            PhiZ, SZ, SdotZ, PhidotZ, AZ = [var[dom][pt] for var in VarZ];
-            PhiZZ, SZZ, SdotZZ, PhidotZZ, AZZ = [var[dom][pt] for var in VarZZ];
-            z = grids[dom][pt]; LN = (z == 0 ? -log(eps(typeof(z))) : -log(z) );
+    for domind in 1:Ndom
+        for ptind in 1:domain_sizes[domind]
+            vals   =  [x[domind][ptind] for x in Var];
+            valsZ  =  [x[domind][ptind] for x in VarZ];
+            valsZZ =  [x[domind][ptind] for x in VarZZ];
 
-            SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][dom][pt],previous_sdot_arr[2][dom][pt],previous_sdot_arr[3][dom][pt],previous_sdot_arr[4][dom][pt],Var[ind_sdot][dom][pt],dt);
+            z = grids[domind][ptind]
+            LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
 
-            res[dom][pt] = constr(Phi,PhiZ,PhiZZ, S,SZ,SZZ, Sdot,SdotZ,SdotZZ, Phidot,PhidotZ,PhidotZZ, A,AZ,AZZ, z,LN, t, X, XPrime, p2, a4, SdotT, DS0,DS1,DS2,DS3,DS4);
+            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+
+            SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][domind][ptind],previous_sdot_arr[2][domind][ptind],previous_sdot_arr[3][domind][ptind],previous_sdot_arr[4][domind][ptind],Var[ind_sdot][domind][ptind],dt);
+
+            res[domind][ptind] = constr(SdotT, XPrime, pdevars);
         end
     end
-
     res[1][1] = 0;
 
 
@@ -756,7 +761,9 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
     previous_x_arr_arg[3] = previous_x_arr[4];
     previous_x_arr_arg[4] = X;
 
-    return res
+    flatres = reduce(vcat,[subres[2:end] for subres in res]);
+
+    return linalg.norm(flatres);
 end
 
 function Sdot_to_unsub(params, z, LN, DSVals, sub_value)
@@ -790,7 +797,7 @@ Attempt at implementing a high-frequency filter.
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
     # alpha = 36.0437;
-    alpha = 1000;
+    alpha = 100;
     # # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 
