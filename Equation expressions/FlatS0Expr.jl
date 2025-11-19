@@ -23,21 +23,21 @@ res = T(0);
 return res;
 end
 
-function DS2f(params, DS1, p3, p4)
+function DS2f(params, p3, p4)
 
 res = T(0); 
 
 return res;
 end
 
-function DS3f(params, DS1, p3, p4)
+function DS3f(params, p3, p4)
 
 res = T(0); 
 
 return res;
 end
 
-function DS4f(params, DS1, p3, p4)
+function DS4f(params, p3, p4)
 
 res = T(0); 
 
