@@ -43,3 +43,9 @@ res = T(0);
 
 return res;
 end
+
+function DtDS1f(params, XPrime, p2Prime, a4Prime)
+
+val = zero(T);
+return val
+end

@@ -2,9 +2,9 @@
 # X = ξ. XPrime = ξ'. In general, spatial derivatives are denoted by adding a Z at the end, i.e. AZZ = ∂_zz(A).
 # The data needed at the start of a timestep: a profile for Φ (which includes ϕ_2), values for a_4 and ξ.
 
-tofloat64(x) = x             # fallback for non-collections
-tofloat64(x::Number) = Float64(x)
-tofloat64(x::AbstractArray) = [tofloat64(y) for y in x]
+toFormat(x) = x             # fallback for non-collections
+toFormat(x::Number) = T(x)
+toFormat(x::AbstractArray) = [toFormat(y) for y in x]
 
 # Properties of the ODEs and indices of the different variables, as needed.
 
@@ -152,8 +152,6 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3,p4)
     SRCVec = Vector{T}(undef, Npts);
 
     mat = Matrix{T}(undef,Npts,Npts)
-
-    DS1 = DS1f(params);
 
     DS2 = DS2f(params, p3, p4);
     DS3 = DS3f(params, p3, p4);
@@ -415,7 +413,7 @@ end;
 
 
 #---------------------------------------------
-#TIME EVOLUTION FUNCTIONS
+# TIME EVOLUTION FUNCTIONS
 #---------------------------------------------
 
 function TimeDer(params, Var)
@@ -484,7 +482,10 @@ function TimeDer(params, Var)
     # Finally compute a4'(t) using the explicit formula  
 
     a4Prime = Dta4(params, [DS0, DS1, DS2, DS3, DS4], XPrime, PhiT[1][1]);
-    return XPrime, PhiT, a4Prime, DS1, DS2;
+
+    DtDS1 = DtDS1f(params, XPrime, PhiT[1][1], a4Prime);
+
+    return XPrime, PhiT, a4Prime, DS1, DtDS1;
 end;
 
 function RK4(params, Var, dt)
@@ -547,7 +548,7 @@ end
 function AB4(params, Var ,dt, OldTimeDer)
     
     t, X0, p2, a40, DS0, DS1 = params;
-    DS1 = DS1f(params); # <- this is more stable!
+    # DS1 = DS1f(params); # <- this is more stable!
 
 
     OldF = deepcopy(OldTimeDer);
@@ -578,22 +579,6 @@ function AB4(params, Var ,dt, OldTimeDer)
     VarNew = ComputeBulkFromVec(param_new,PhiNew);
 
     return param_new, VarNew
-end
-
-function Monitor(params)
-    # alpha is set to zero
-    # Expressions copied from the paper, could have typos!
-    beta = T(1/16);
-    
-    t, X, p2, a4, DS0, DS1 = params;
-
-    DS2 = DS2f(params, 0,0);
-
-    Eps = -3*a4/4 - M*p2 + M^2 * X^2 - M^4 * (beta - T(7/36))+3*DS1^4/(16*DS0^4) + M^2*(DS1^2 / (8*DS0^2) + 2*DS2/(3*DS0));
-    Mom = -a4/4 + M * p2/3 - M^2 * X^2 /3 +M^4 * (beta - T(5/108)) + DS1^2 * (DS1^2 - 4*DS0*DS2)/(16*DS0^4) - (M^2/3)*(DS1^2/(8*DS0^2)+13*DS2/(12*DS0));
-    Op = -2*p2 + M * X^2 - M^3 * (4*beta - T(1/3)) + M*(-DS1^2 / (4*DS0^2)+5*DS2/(4*DS0));
-
-    return Eps, Mom, Op
 end
 
 function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
@@ -714,6 +699,34 @@ function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
     return res
 end
 
+"""
+cheb_filter(f::Vector{T})
+Attempt at implementing a high-frequency filter.
+"""
+function cheb_filter(f::Vector{T})
+    N = length(f) - 1
+    # alpha = 36.0437;
+    alpha = 100;
+    # # Transform to Chebyshev coefficients using DCT-I
+    a = dct(f, 1)
+
+    # Construct modal filter
+    n = (0:N)./N;
+    sigma = exp.(-alpha * (n.^ (8*N)));
+
+    # Apply damping
+    a_filtered = a .* sigma
+
+    # Back to physical space
+    f_filtered = idct(a_filtered, 1);  # normalization for DCT-I
+
+    return f_filtered
+end
+
+
+#---------------------------------------------
+# CHANGING TO FULL VARIABLES AND MONITORING
+#---------------------------------------------
 
 """
 EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_arg, dt)
@@ -794,26 +807,35 @@ function A_to_unsub(params, z, LN, DSVals, sub_value, XPrime)
 
 end
 
+function Monitor(params)
+    # alpha is set to zero
+    # Expressions copied from the paper, could have typos!
+    beta = T(1/16);
+    
+    t, X, p2, a4, DS0, DS1 = params;
+
+    DS2 = DS2f(params, 0,0);
+
+    Eps = -3*a4/4 - M*p2 + M^2 * X^2 - M^4 * (beta - T(7/36))+3*DS1^4/(16*DS0^4) + M^2*(DS1^2 / (8*DS0^2) + 2*DS2/(3*DS0));
+    Mom = -a4/4 + M * p2/3 - M^2 * X^2 /3 +M^4 * (beta - T(5/108)) + DS1^2 * (DS1^2 - 4*DS0*DS2)/(16*DS0^4) - (M^2/3)*(DS1^2/(8*DS0^2)+13*DS2/(12*DS0));
+    Op = -2*p2 + M * X^2 - M^3 * (4*beta - T(1/3)) + M*(-DS1^2 / (4*DS0^2)+5*DS2/(4*DS0));
+
+    return Eps, Mom, Op
+end
+
 """
-cheb_filter(f::Vector{T})
-Attempt at implementing a high-frequency filter.
+Temperature(params, subA_arr)
+Computing the temperature of the *apparent* horizon
 """
-function cheb_filter(f::Vector{T})
-    N = length(f) - 1
-    # alpha = 36.0437;
-    alpha = 100;
-    # # Transform to Chebyshev coefficients using DCT-I
-    a = dct(f, 1)
+function Temperature(params, subA_arr, near_boundary_phi, XPrime)
+# Only need the values for A in the subdomain in which the apparent horizon is located
+    t, X, p2, a4, DS0, DS1 = params;
+    p3, p4 = BoundaryInterpolate(near_boundary_phi)[2:3];
 
-    # Construct modal filter
-    n = (0:N)./N;
-    sigma = exp.(-alpha * (n.^ (8*N)));
+    DSVals = [DS0, DS1, DS2f(params,p3,p4), DS3f(params, p3, p4), DS4f(params, p3, p4)];
 
-    # Apply damping
-    a_filtered = a .* sigma
+    A_arr = [A_to_unsub(params, grids[domAH][ind], -log(grids[domAH][ind]), DSVals, subA_arr[ind], XPrime) for ind in eachindex(subA_arr)];
+    AZ_arr = diff1_mats[domAH]*A_arr;
 
-    # Back to physical space
-    f_filtered = idct(a_filtered, 1);  # normalization for DCT-I
-
-    return f_filtered
+    return -zAH^2 * AZ_arr[indAH]
 end
