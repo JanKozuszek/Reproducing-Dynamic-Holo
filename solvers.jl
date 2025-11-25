@@ -27,7 +27,7 @@ global const ind_S0 = 5;
 global const ind_S1 = 6;
 
 global const NVar = 5;
-global const DConst = 20;
+global const DConst = 0;
 
 Power(x,y) = x^y;
 
@@ -705,8 +705,8 @@ Attempt at implementing a high-frequency filter.
 """
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
-    # alpha = 36.0437;
-    alpha = 100;
+    alpha = 36.0437;
+    # alpha = 100;
     # # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 
