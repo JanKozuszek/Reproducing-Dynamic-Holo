@@ -27,7 +27,7 @@ global const ind_S0 = 5;
 global const ind_S1 = 6;
 
 global const NVar = 5;
-global const DConst = 0;
+global const DConst = 1;
 
 Power(x,y) = x^y;
 
@@ -105,18 +105,57 @@ function ComputeSingleDerivative(Vec; deg = 1)
     return DVec
 end
 
+"""
+    BoundaryInterpolate(VarVec)
+
+Compute the *long Mathematica fit only*:
+
+    a + b x + c x^2 log(x+eps) + d x^2 + e x^3 log(x+eps) + f x^3
+
+Returns params = [a, b, c, d, e, f].
+
+- Uses first `npoints` near-boundary points (default: 20).
+- Uses SVD solve; optional ridge parameter `λ` (default 0.0).
+- Ensures x^k log(x+eps) is exactly 0 at x = 0.
+"""
 function BoundaryInterpolate(VarVec)
-    # Take the near - boundary points in the given variable and fit a model, including some logarithmic terms, to extract the FG expansion coefficients
-    model(z, p) = p[1] .+ p[2] .*z + p[3] .*z.^2 .+ p[4]  .* z.^3 .+ p[5] .* log.(z .+eps(T)) .* z .+ p[6] .* log.(z .+eps(T)) .* z .^2;
 
-    zdata = grids[1][1:7];
-    ydata = VarVec[1:7];
+    n = min(40, domain_sizes[1]);
+    zdata = grids[1][1:n];
+    ydata = VarVec[1:n];
+    eps_log = 1.e-30;
+    λ = 0.0;
 
-    p0 = [VarVec[1], 0., 0., 0. , 0., 0.];
-    fit = lsq.curve_fit(model, zdata, ydata, p0);
-    params = lsq.coef(fit);
-    return params
+    # compute log(z + eps)
+    log_x_plus_eps = log.(zdata .+ eps_log)
+
+    # construct columns
+    col1 = ones(n)             # 1
+    col2 = zdata               # x
+    col3 = zdata.^2 .* log_x_plus_eps
+    col4 = zdata.^2            # x^2
+    col5 = zdata.^3 .* log_x_plus_eps
+    col6 = zdata.^3            # x^3
+
+    # enforce exact symbolic behaviour: x^k log(x+eps) == 0 at x = 0
+    for i in eachindex(zdata)
+        if zdata[i] == 0.0
+            col3[i] = 0.0
+            col5[i] = 0.0
+        end
+    end
+
+    # build design matrix
+    Φ = hcat(col1, col2, col3, col4, col5, col6)
+
+    # SVD solve (regularized if λ>0)
+    U,S,V = linalg.svd(Φ; full=false)
+    invS = λ == 0.0 ? linalg.Diagonal(1.0 ./ S) : linalg.Diagonal(S ./ (S.^2 .+ λ))
+    params = V * (invS * (U' * ydata))
+
+    return params   # [a, b, c, d, e, f]
 end
+
 
 #---------------------------------------------
 #ODE SOLVER FUNCTIONS
@@ -706,7 +745,7 @@ Attempt at implementing a high-frequency filter.
 function cheb_filter(f::Vector{T})
     N = length(f) - 1
     alpha = 36.0437;
-    # alpha = 100;
+    # alpha = 1000;
     # # Transform to Chebyshev coefficients using DCT-I
     a = dct(f, 1)
 

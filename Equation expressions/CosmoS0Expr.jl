@@ -47,3 +47,9 @@ res = (E^((H*t)/2)*H*sech(Om*(t - tstar))^2*(cosh(Om*(t - tstar))*sech(Om*tstar)
 
 return res;
 end
+
+function DtDS1f(params, XPrime, p2Prime, a4Prime)
+val = DS2f(params, 0,0);
+
+return val
+end
