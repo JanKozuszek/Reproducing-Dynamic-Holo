@@ -7,10 +7,11 @@ toFormat(x::Number) = T(x)
 toFormat(x::AbstractArray) = [toFormat(y) for y in x]
 
 # Properties of the ODEs and indices of the different variables, as needed.
+# The 5th ODE is for checking the constraint.
 
-global const varnamelist = ["S","Sdot","Phidot","A"]; 
-global const degreelist = [2,1,1,2];
-global const regBC = [true, false, true, false];
+global const varnamelist = ["S","Sdot","Phidot","A","DtSdot"]; 
+global const degreelist = [2,1,1,2,1];
+global const regBC = [true, false, true, false, false];
 global const E = exp(one(T));
 
 global const ind_phi    = 1;
@@ -27,7 +28,8 @@ global const ind_S0 = 5;
 global const ind_S1 = 6;
 
 global const NVar = 5;
-global const DConst = 1;
+#In case we want to keep Sdot constant but not zero:
+global const SDotConst = 0.;
 
 Power(x,y) = x^y;
 
@@ -59,6 +61,13 @@ function_map = Dict(
         :Coeff1 => ACoeff1,
         :Coeff2 => ACoeff2,
         :Src    => ASrc
+    ),
+
+    "DtSdot" => Dict(
+        :Coeff0 => DtSdotCoeff0,
+        :Coeff1 => DtSdotCoeff1,
+        :Coeff2 => DtSdotCoeff2,
+        :Src    => DtSdotSrc
     )
 );
 
@@ -74,6 +83,7 @@ using ProgressMeter
 using Parameters: @unpack
 using StaticArrays
 using FFTW
+using FastTransforms
 using GenericLinearAlgebra
 
 function ComputeDerivatives(Var)
@@ -105,63 +115,43 @@ function ComputeSingleDerivative(Vec; deg = 1)
     return DVec
 end
 
-"""
-    BoundaryInterpolate(VarVec)
 
-Compute the *long Mathematica fit only*:
+function BoundaryInterpolate(VarVec; prec = 128)
+    # setprecision(prec);
 
-    a + b x + c x^2 log(x+eps) + d x^2 + e x^3 log(x+eps) + f x^3
+    # zdata = BigFloat.(grids[1][3:end])
+    # ydata = BigFloat.(VarVec[3:end])
 
-Returns params = [a, b, c, d, e, f].
+    zdata = grids[1][1:end];
+    ydata = VarVec[1:end];
+    epsBF = eps(T);
 
-- Uses first `npoints` near-boundary points (default: 20).
-- Uses SVD solve; optional ridge parameter `λ` (default 0.0).
-- Ensures x^k log(x+eps) is exactly 0 at x = 0.
-"""
-function BoundaryInterpolate(VarVec)
 
-    n = min(40, domain_sizes[1]);
-    zdata = grids[1][1:n];
-    ydata = VarVec[1:n];
-    eps_log = 1.e-30;
-    λ = 0.0;
+    basis = hcat(
+        ones(T,length(zdata)),
+        zdata,
+        zdata.^2,
+        zdata.^3,
+        zdata.^2 .* log.(zdata .+ epsBF),
+        zdata.^3 .* log.(zdata .+ epsBF)
+    )
 
-    # compute log(z + eps)
-    log_x_plus_eps = log.(zdata .+ eps_log)
+    # params = basis \ ydata;
 
-    # construct columns
-    col1 = ones(n)             # 1
-    col2 = zdata               # x
-    col3 = zdata.^2 .* log_x_plus_eps
-    col4 = zdata.^2            # x^2
-    col5 = zdata.^3 .* log_x_plus_eps
-    col6 = zdata.^3            # x^3
+    U, S, V = linalg.svd(basis);
+    invS = linalg.Diagonal(1.0 ./ S);
 
-    # enforce exact symbolic behaviour: x^k log(x+eps) == 0 at x = 0
-    for i in eachindex(zdata)
-        if zdata[i] == 0.0
-            col3[i] = 0.0
-            col5[i] = 0.0
-        end
-    end
+    params = V * invS * U' * ydata;
 
-    # build design matrix
-    Φ = hcat(col1, col2, col3, col4, col5, col6)
 
-    # SVD solve (regularized if λ>0)
-    U,S,V = linalg.svd(Φ; full=false)
-    invS = λ == 0.0 ? linalg.Diagonal(1.0 ./ S) : linalg.Diagonal(S ./ (S.^2 .+ λ))
-    params = V * (invS * (U' * ydata))
-
-    return params   # [a, b, c, d, e, f]
+    return T.([params[1],params[2],params[3]])
 end
-
 
 #---------------------------------------------
 #ODE SOLVER FUNCTIONS
 #---------------------------------------------
 
-function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3,p4)
+function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3,p4, XPrime = zero(T), a4Prime = zero(T), p2Prime = zero(T))
     #Compute the matrix for one of the ODEs, so that it can be written as mat * vec = src.
     #Working in a given domain "domind"
     #Not dealing with boundary conditions here.
@@ -204,7 +194,7 @@ function ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3,p4)
         z = grids[domind][ptind]
         LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
 
-        pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+        pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4, XPrime, a4Prime, p2Prime)
 
         if degree == 2
             F2Vec[ptind] = co2_function(pdevars);
@@ -309,8 +299,8 @@ function DomainMatching(EqNum, degree, solParticular, solHomogeneous, solHomogen
     return sol
 end
 
-function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
-    # Solve an ODE by direct linear inversion. Grid is subdivided into Ndom domains of Npts each.
+function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ, XPrime = zero(T), a4Prime = zero(T), p2Prime = zero(T))
+    # Solve an ODE by direct linear inversion. Grid is subdivided into Ndom domains.
     # This routine can now handle the case where zmin = 0. But that might still be bad for stability.
     degree = degreelist[EqNum];
 
@@ -330,7 +320,7 @@ function LinearSolveODE(EqNum, params, Var, VarZ, VarZZ)
         Npts = domain_sizes[domind];
 
         
-        mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3, p4);
+        mat, SRCVec = ComputeODEMatrix(EqNum, domind, params, Var, VarZ, VarZZ, p3, p4, XPrime, a4Prime, p2Prime);
 
         HomoSRCVec = zeros(T, Npts);
         HomoSRCVec[1] = 1;
@@ -389,8 +379,8 @@ end
 function ComputeBulkFromVec(params, phi_vec)
     # PhiTilde, ξ and a_4 together determine all data on a given time slice. This just computes it.
     # Takes only a vector for phi as an argument!
-    Var = [copy(zero_var) for var in 1:NVar];
-    Var[1] = copy(phi_vec);
+    Var = [deepcopy(zero_var) for var in 1:NVar];
+    Var[1] = deepcopy(phi_vec);
     VarZ, VarZZ = ComputeDerivatives(Var);
 
     for eq in 1:4
@@ -418,11 +408,47 @@ function CorrectXi(params, Var)
 
 
     # This interpolation degree is arbitrary!!
-    interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
-    foo(x,p) = interpolant(x);
-    problem = nonlin.NonlinearProblem(foo, zAH);
-    sol = nonlin.solve(problem);
-    Xnew = Xnew - 1. /(2. * zAH) + 1. /(2. * sol.u);
+    # interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
+    # foo(x,p) = interpolant(x) + SDotConst;
+    # problem = nonlin.NonlinearProblem(foo, zAH);
+    # sol = nonlin.solve(problem);
+
+    # Assuming the AH is already in this range, if not then fix later lol
+    setsol = false;
+    leftval = Sdot_unsub[1];
+    leftpos = flatgrid[1]; 
+    rightval = Sdot_unsub[end];
+    rightpos = flatgrid[end];
+
+
+    for ind in eachindex(flatgrid)
+        # if abs(Sdot_unsub[ind]) < 1.e-5;
+        #     sol = flatgrid[ind];
+        #     setsol = true;
+        #     break
+        if Sdot_unsub[ind] < 0
+            rightval = Sdot_unsub[ind];
+            rightpos = flatgrid[ind];
+            break
+        else
+            leftval = Sdot_unsub[ind];
+            leftpos = flatgrid[ind]; 
+        end
+
+        if ind == length(flatgrid)
+
+            leftval = Sdot_unsub[ind-1];
+            leftpos = flatgrid[ind-1]; 
+
+            rightval = Sdot_unsub[ind];
+            rightpos = flatgrid[ind];
+        end
+    end
+
+    
+    sol = leftpos - leftval * (rightpos - leftpos) / (rightval - leftval);
+
+    Xnew = Xnew - 1. /(2. * zAH) + 1. /(2. * sol) - SDotConst * (zAH - sol);
     
     return(Xnew);
     
@@ -435,8 +461,8 @@ function PlotSdot(params, Var)
     DS1 = copy(params[ind_S1]);
     DSVals = [DS0, DS1, DS2f(params, p3, p4), DS3f(params, p3, p4), DS4f(params, p3, p4)];
     
-    flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[2:end]]);
-    flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][2:end]]);
+    flatgrid = reduce(vcat,[subgrid[1:end-1] for subgrid in grids[end-1:end]]);
+    flatVar = reduce(vcat,[subvar[1:end-1] for subvar in Var[ind_sdot][end-1:end]]);
     Sdot_unsub = [Sdot_to_unsub(params, flatgrid[ii], -log(flatgrid[ii]), DSVals, flatVar[ii]) for ii in eachindex(flatgrid)];
 
     interpolant = poly.fit(flatgrid, Sdot_unsub, 20);
@@ -456,9 +482,7 @@ end;
 #---------------------------------------------
 
 function TimeDer(params, Var)
-    #Compute the time derivatives of PhiTilde, ξ and a_4. 
-    #There was an issue of PhiTilde 'coming apart' at the junctions between domains.
-    #Now solved by the correct treatment of junction points, as detailed in the Jecco paper. 
+    #Compute the time derivatives of PhiTilde, ξ and a_4.  
     t, X, p2, a4, DS0, DS1= params;
     p3, p4 = BoundaryInterpolate(Var[1][1])[2:3];
 
@@ -476,16 +500,17 @@ function TimeDer(params, Var)
     valsAH   =  [x[domAH][indAH] for x in Var];
     valsZAH  =  [x[domAH][indAH] for x in VarZ];
     valsZZAH =  [x[domAH][indAH] for x in VarZZ];
-    pdevars = PDEVars(valsAH..., valsZAH..., valsZZAH..., zAH, -log(zAH), t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+    pdevars = PDEVars(valsAH..., valsZAH..., valsZZAH..., zAH, -log(zAH), t, X, p2, a4, DS0, DS1, DS2, DS3, DS4, zero(T),zero(T),zero(T))
 
     XPrime = DtX(pdevars);
+    # XPrime = 0;
 
 
     #= Now compute ∂_t Φ using the definition of Φdot =#
 
 
     Threads.@threads for domind in 1:Ndom
-        for ptind in 1:domain_sizes[domind]
+        @inbounds for ptind in 1:domain_sizes[domind]
 
             vals   =  [x[domind][ptind] for x in Var];
             valsZ  =  [x[domind][ptind] for x in VarZ];
@@ -494,18 +519,13 @@ function TimeDer(params, Var)
             z = grids[domind][ptind]
             LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
 
-            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4, XPrime,zero(T),zero(T))
 
-            PhiT[domind][ptind] = DtPhi(XPrime, pdevars);
+            PhiT[domind][ptind] = DtPhi(pdevars);
         end
 
-        PhiT[domind] = cheb_filter(PhiT[domind]);
+        filter_dom!(PhiT[domind]);
     end
-
-
-    # Including log terms in near boundary interpolation. 
-
-    # PhiT[1][1] = BoundaryInterpolate(PhiT[1])[1];
 
     # Propagation matching
     for dom in 1:Ndom-1
@@ -587,17 +607,17 @@ end
 function AB4(params, Var ,dt, OldTimeDer)
     
     t, X0, p2, a40, DS0, DS1 = params;
-    # DS1 = DS1f(params); # <- this is more stable!
+    DS1 = DS1f(params); # <- this is more stable!
 
 
-    OldF = deepcopy(OldTimeDer);
-    Phi0 = deepcopy(Var[1]);
+    # OldF = deepcopy(OldTimeDer);
+    # Phi0 = deepcopy(Var[1]);
 
     k0X, k0Phi, k0a4, k0S0, k0S1 = TimeDer(params,Var);
 
-    k1X, k1Phi, k1a4, k1S0, k1S1 = OldF[3];
-    k2X, k2Phi, k2a4, k2S0, k2S1 = OldF[2];
-    k3X, k3Phi, k3a4, k3S0, k3S1 = OldF[1];
+    k1X, k1Phi, k1a4, k1S0, k1S1 = OldTimeDer[3];
+    k2X, k2Phi, k2a4, k2S0, k2S1 = OldTimeDer[2];
+    k3X, k3Phi, k3a4, k3S0, k3S1 = OldTimeDer[1];
 
     kX = dt * (55 * k0X - 59 * k1X + 37 * k2X - 9 * k3X) / 24;
     kPhi = dt * (55 * k0Phi - 59 * k1Phi + 37 * k2Phi - 9 * k3Phi) / 24;
@@ -605,12 +625,11 @@ function AB4(params, Var ,dt, OldTimeDer)
     kS0 = dt * (55 * k0S0 - 59 * k1S0 + 37 * k2S0 - 9 * k3S0) / 24;
     kS1 = dt * (55 * k0S1 - 59 * k1S1 + 37 * k2S1 - 9 * k3S1) / 24;
 
-
+    OldTimeDer[1] = OldTimeDer[2];
+    OldTimeDer[2] = OldTimeDer[3];
     OldTimeDer[3] = [k0X, k0Phi, k0a4, k0S0, k0S1];
-    OldTimeDer[2] = OldF[3];
-    OldTimeDer[1] = OldF[2];
 
-    XNew = X0 + kX; PhiNew = Phi0 + kPhi; a4New = a40 + ka4; DS0New = DS0 + kS0; DS1New = DS1 + kS1;
+    XNew = X0 + kX; PhiNew = Var[1] + kPhi; a4New = a40 + ka4; DS0New = DS0 + kS0; DS1New = DS1 + kS1;
     p2New = PhiNew[1][1];
 
 
@@ -623,6 +642,9 @@ end
 function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     #The full time evolution function
     #Currently set up to use AB4 but can be changed
+
+    RKfactor = 50; #The initial steps will be taken using a shorter time step with RK4 to prepare the AB4 solver.
+    RKdt = dt/RKfactor;
 
     inittime, initX, initp2, inita4, initDS0, initDS1 = initparams;
 
@@ -656,19 +678,20 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
     prog = ProgressUnknown(desc = "Starting the evolution", spinner = true)
 
     # First couple of steps to set up later AB4
-    for ii in 1:3
-
-        CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
-
-        time = time+dt;
-        counter += 1; 
-
+    for _ in 1:3
         push!(OldTimeDer, TimeDer(CurrentParams,VarCurrent));
         push!(OldSdot,VarCurrent[ind_sdot])
         push!(OldXarr,XCurrent);
+
+        for _ in 1:RKfactor
+            CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, RKdt);
+            time = time+RKdt;
+        end
+        counter += 1; 
+
         if counter == write_out
-            push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op]);
+            push!(out_io, Float64.(VarCurrent));
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,[1., 0., 0., 0., 0.]]);
             counter = 0;
         end
 
@@ -691,31 +714,42 @@ function Evolve(initparams, initVar, maxtime, dt, write_out ,out_io, monitor_io)
 
     while time<maxtime
 
+
         CurrentParams, VarCurrent = AB4(CurrentParams, VarCurrent, dt, OldTimeDer);
+        # CurrentParams, VarCurrent = RK4(CurrentParams, VarCurrent, dt);
+
+        # if counter % 10 == 0
+        #     filter_var!(CurrentParams, VarCurrent);
+        # end
         # CurrentParams, VarCurrent = RK4(CurrentParams,VarCurrent, dt);
 
         time = time+dt;
-        counter += 1; 
+        counter += 1;
 
-        constr_norm= EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
-
-        p3, p4 = BoundaryInterpolate(VarCurrent[1][1])[2:3];
-
-        DS0 = CurrentParams[ind_S0]
-        DS1 = CurrentParams[ind_S1]
-        DS2 = DS2f(CurrentParams, p3, p4);
-        DS3 = DS3f(CurrentParams, p3, p4);
-        DS4 = DS4f(CurrentParams, p3, p4);
-
-        testsdot = Sdot_to_unsub(CurrentParams, zAH, -log(zAH), [DS0, DS1, DS2, DS3, DS4], VarCurrent[ind_sdot][domAH][indAH]);
-
-        next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3),",  Sdot at zAH = ", format(testsdot, precision=3)));
+        constr_norm, constr_arr = EvaluateConstraint(CurrentParams, VarCurrent, OldSdot, OldXarr, dt);
 
     
         if counter == write_out
+
+            p3, p4 = BoundaryInterpolate(VarCurrent[1][1])[2:3];
+
+            DS0 = CurrentParams[ind_S0]
+            DS1 = CurrentParams[ind_S1]
+            DS2 = DS2f(CurrentParams, p3, p4);
+            DS3 = DS3f(CurrentParams, p3, p4);
+            DS4 = DS4f(CurrentParams, p3, p4);
+
+            testsdot = Sdot_to_unsub(CurrentParams, zAH, -log(zAH), [DS0, DS1, DS2, DS3, DS4], VarCurrent[ind_sdot][domAH][indAH]);
+            
+            # XPrime, PhiT, a4Prime, DS1, DS1Dt = TimeDer(CurrentParams, VarCurrent)
+            # constr_norm_2, constr_arr_2 = EvaluateConstraintNew(CurrentParams, VarCurrent, XPrime, a4Prime, PhiT[1][1]);
+
+            next!(prog, desc = string("time = ",format(time, precision=3),", constraint violation = ", format(constr_norm, precision=3),",  Sdot at zAH = ", format(testsdot, precision=3)));
+
+
             Eps, Mom, Op = Monitor(CurrentParams)
             push!(out_io, VarCurrent);
-            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op]);
+            push!(monitor_io,[time,CurrentParams,Eps,Mom,Op,[DS0, DS1, DS2, DS3, DS4],constr_arr]);
 
 
             # out_data = tofloat64(VarCurrent);
@@ -738,29 +772,96 @@ function BackwardsTimeDerivative(a4,a3,a2,a1,a0,dt)
     return res
 end
 
-"""
-cheb_filter(f::Vector{T})
-Attempt at implementing a high-frequency filter.
-"""
-function cheb_filter(f::Vector{T})
-    N = length(f) - 1
-    alpha = 36.0437;
-    # alpha = 1000;
-    # # Transform to Chebyshev coefficients using DCT-I
-    a = dct(f, 1)
+function filter_dom!(varvec)
+    alpha = 36.0;
 
-    # Construct modal filter
-    n = (0:N)./N;
-    sigma = exp.(-alpha * (n.^ (8*N)));
+    domsize = length(varvec);
+    k = (0:domsize-1) ./ (domsize-1)
+    order = ceil(domsize / 4);
+    sigma = exp.(-alpha * (k .^ order))
+    
+    varvec = chebyshevtransform(varvec);
+    varvec = sigma .* varvec;
+    varvec = ichebyshevtransform(varvec);
 
-    # Apply damping
-    a_filtered = a .* sigma
-
-    # Back to physical space
-    f_filtered = idct(a_filtered, 1);  # normalization for DCT-I
-
-    return f_filtered
 end
+
+
+
+# function filter_var!(params, Var)
+#     alpha = 36.0;
+
+#     #Compute the time derivatives of PhiTilde, ξ and a_4.  
+#     t, X, p2, a4, DS0, DS1= params;
+#     p3, p4 = BoundaryInterpolate(Var[ind_phi][1])[2:3];
+
+#     DS2 = DS2f(params, p3, p4);
+#     DS3 = DS3f(params, p3, p4);
+#     DS4 = DS4f(params, p3, p4);
+
+#     #= Begin by computing ξ'(t), which we need to match at domain boundaries in the correct direction =#
+#     AArr = Var[ind_a];
+#     PhiArr = Var[ind_phi]
+#     VarZ,VarZZ = ComputeDerivatives(Var);
+
+#     valsAH   =  [x[domAH][indAH] for x in Var];
+#     valsZAH  =  [x[domAH][indAH] for x in VarZ];
+#     valsZZAH =  [x[domAH][indAH] for x in VarZZ];
+#     pdevars = PDEVars(valsAH..., valsZAH..., valsZZAH..., zAH, -log(zAH), t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+
+#     XPrime = DtX(pdevars);
+
+#     #target_vec holds the values we want at all domain boundaries. We compute them using the same propagation as in the evolution
+
+#     target_vec = zeros(T, Ndom + 1);
+#     target_vec[1] = p2;
+
+
+#     #Filter inside each subdomain
+#     for domind in 1:Ndom
+#         domsize = domain_sizes[domind];
+#         order = ceil(domsize / 4);
+#         k = (0:domsize-1) ./ (domsize-1)
+#         sigma = exp.(-alpha * (k .^ order))
+
+#         PhiArr[domind] = chebyshevtransform(PhiArr[domind]);
+#         PhiArr[domind] = sigma .* PhiArr[domind];
+#         PhiArr[domind] = ichebyshevtransform(PhiArr[domind]);
+#     end
+
+#     #Match values at the boundary
+
+#     for dom in 1:Ndom-1
+#         z = grids[dom][end];
+#         LN = -log(z);
+#         csign = A_to_unsub(params, z, LN, [DS0, DS1, DS2, DS3, DS4], AArr[dom][end], XPrime);
+#         if csign>0
+#             target_vec[dom + 1] = PhiArr[dom+1][1];
+#         else
+#             target_vec[dom + 1] = PhiArr[dom][end];
+#         end
+#     end
+
+#     target_vec[end] = PhiArr[end][end];
+
+#     for domind in 1:Ndom
+#         left_target = target_vec[domind];
+#         right_target = target_vec[domind + 1];
+
+#         left_current = PhiArr[domind][1];
+#         right_current = PhiArr[domind][end];
+
+#         #Shift everything in this domain linearly. Rescale the grid to go from 0 to 1 for simplicity
+#         const_coeff = left_target - left_current;
+#         lin_coeff = (right_target - right_current) - const_coeff;
+#         lin_pts = (grids[domind] .- grids[domind][1]) ./ (grids[domind][end] - grids[domind][1]);
+        
+#         PhiArr[domind] = PhiArr[domind] .+ const_coeff .+ (lin_pts .* lin_coeff);
+#     end
+
+#     Var[ind_phi] = PhiArr;
+
+# end
 
 
 #---------------------------------------------
@@ -782,7 +883,7 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
     DS4 = DS4f(params, p3, p4);
 
     VarZ, VarZZ = ComputeDerivatives(Var);
-    res = copy(zero_var);
+    res = deepcopy(zero_var);
 
     XPrime = BackwardsTimeDerivative(previous_x_arr[1],previous_x_arr[2],previous_x_arr[3],previous_x_arr[4],X,dt)
 
@@ -797,11 +898,11 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
             z = grids[domind][ptind]
             LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
 
-            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4)
+            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4, XPrime, zero(T), zero(T))
 
             SdotT = BackwardsTimeDerivative(previous_sdot_arr[1][domind][ptind],previous_sdot_arr[2][domind][ptind],previous_sdot_arr[3][domind][ptind],previous_sdot_arr[4][domind][ptind],Var[ind_sdot][domind][ptind],dt);
 
-            res[domind][ptind] = constr(SdotT, XPrime, pdevars);
+            res[domind][ptind] = constr(SdotT, pdevars);
         end
     end
     res[1][1] = 0;
@@ -819,7 +920,44 @@ function EvaluateConstraint(params, Var, previous_sdot_arr_arg, previous_x_arr_a
 
     flatres = reduce(vcat,[subres[2:end] for subres in res]);
 
-    return linalg.norm(flatres);
+    return linalg.norm(flatres), flatres;
+end
+
+function EvaluateConstraintNew(params, Var, XPrime, a4Prime, p2Prime)
+    t, X, p2, a4, DS0, DS1 = params;
+    p3,p4 = BoundaryInterpolate(Var[1][1])[2:3];
+
+    DS2 = DS2f(params, p3, p4);
+    DS3 = DS3f(params, p3, p4);
+    DS4 = DS4f(params, p3, p4);
+
+    VarZ, VarZZ = ComputeDerivatives(Var);
+    res = deepcopy(zero_var);
+
+    SdotT_arr = LinearSolveODE(5, params, Var, VarZ, VarZZ, XPrime, a4Prime, p2Prime);
+
+     for domind in 1:Ndom
+        for ptind in 1:domain_sizes[domind]
+            vals   =  [x[domind][ptind] for x in Var];
+            valsZ  =  [x[domind][ptind] for x in VarZ];
+            valsZZ =  [x[domind][ptind] for x in VarZZ];
+
+            z = grids[domind][ptind]
+            LN = ifelse(z == 0, -log(eps(typeof(z))), -log(z)) #Prevents evaluating log(0);
+
+            pdevars = PDEVars(vals..., valsZ..., valsZZ..., z, LN, t, X, p2, a4, DS0, DS1, DS2, DS3, DS4, XPrime, a4Prime, p2Prime)
+
+            SdotT = SdotT_arr[domind][ptind]
+
+            res[domind][ptind] = constr(SdotT, pdevars);
+        end
+    end
+
+
+    flatres = reduce(vcat,[subres[2:end] for subres in res]);
+
+    return linalg.norm(flatres), flatres;
+
 end
 
 function Sdot_to_unsub(params, z, LN, DSVals, sub_value)
@@ -846,11 +984,27 @@ function A_to_unsub(params, z, LN, DSVals, sub_value, XPrime)
 
 end
 
+function Phi_to_unsub(params, z, LN, DSVals, sub_value)
+
+    t, X, p2, a4 = params;
+    DS0, DS1, DS2, DS3, DS4 = DSVals;
+    unsub_value = -1/2*(z^4*(-2*DS1^3*LN*M + DS0*DS1*LN*M*(DS2 + DS1*(-3*X + z^(-1))) + DS0^2*LN*M*(DS3 + DS2*(-3*X + z^(-1))) - (2*DS0^3*(M - M*X*z + z^2*sub_value))/z^3))/DS0^3;
+
+    return unsub_value
+end
+
+function S_to_unsub(params, z, LN, DSVals, sub_value)
+
+    t, X, p2, a4 = params;
+    DS0, DS1, DS2, DS3, DS4 = DSVals;
+    S = sub_value;
+    unsub_value = (z^5*(3*DS1^4*(199 - 90*LN)*LN*M^2 - 9*DS0*DS1^2*LN*M^2*(3*DS2*(53 + 20*LN) + 100*DS1*(-4*X + z^(-1))) + DS0^2*LN*M*(6*DS2^2*(247 - 45*LN)*M + 15*DS1*M*(47*DS3 + 84*DS2*(-4*X + z^(-1))) + 20*DS1^2*(23*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) + (1800*DS0^4*(3 - M^2*z^2 + X*z*(3 + M^2*z^2)))/z^6 + 5*DS0^3*(LN*M*(75*DS4*M + 144*DS3*M*(-4*X + z^(-1)) + 4*DS2*(28*M^3 + 54*p2 + 216*M*X^2 + (45*M)/z^2 - (135*M*X)/z)) - (120*DS1*(-9 + M^2*z^2))/z^5 + (1080*S)/z^2)))/(5400*DS0^3);
+
+    return unsub_value
+end
+
 function Monitor(params)
     # alpha is set to zero
-    # Expressions copied from the paper, could have typos!
-    beta = T(1/16);
-    
     t, X, p2, a4, DS0, DS1 = params;
 
     DS2 = DS2f(params, 0,0);

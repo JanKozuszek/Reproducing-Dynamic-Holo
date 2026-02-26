@@ -1,0 +1,121 @@
+{-1/8100*(45*S0[t]*(180*S0[t]^3*(1 + z*\[Xi][t]) + 
+      30*M^2*z^5*(1 - 3*Log[z^(-1)])*Derivative[1][S0][t]^3 - 
+      9*M^2*z^4*S0[t]*Derivative[1][S0][t]*
+       (5*(1 - 2*Log[z^(-1)] + 2*z*(-1 + 3*Log[z^(-1)])*\[Xi][t])*
+         Derivative[1][S0][t] + 6*z*(1 - 3*Log[z^(-1)])*
+         Derivative[2][S0][t]) + S0[t]^2*(20*z*(9 + 2*M^2*z^2)*
+         Derivative[1][S0][t] + 3*M^2*z^4*
+         (5*(1 - 2*Log[z^(-1)] + 2*z*(-1 + 3*Log[z^(-1)])*\[Xi][t])*
+           Derivative[2][S0][t] + 4*z*(1 - 3*Log[z^(-1)])*Derivative[3][S0][
+            t]))) + 
+    z^6*Vfun[-1/2*(z^4*((-2*S0[t]^3*(M + z^2*PhiSub[z] - M*z*\[Xi][t]))/z^3 - 
+          2*M*Log[z^(-1)]*Derivative[1][S0][t]^3 + M*Log[z^(-1)]*S0[t]*
+           Derivative[1][S0][t]*((z^(-1) - 3*\[Xi][t])*Derivative[1][S0][t] + 
+            Derivative[2][S0][t]) + M*Log[z^(-1)]*S0[t]^2*
+           ((z^(-1) - 3*\[Xi][t])*Derivative[2][S0][t] + Derivative[3][S0][
+             t])))/S0[t]^3]*
+     ((1800*S0[t]^4*(3 - M^2*z^2 + z*(3 + M^2*z^2)*\[Xi][t]))/z^6 + 
+      3*M^2*(199 - 90*Log[z^(-1)])*Log[z^(-1)]*Derivative[1][S0][t]^4 - 
+      9*M^2*Log[z^(-1)]*S0[t]*Derivative[1][S0][t]^2*
+       (100*(z^(-1) - 4*\[Xi][t])*Derivative[1][S0][t] + 
+        3*(53 + 20*Log[z^(-1)])*Derivative[2][S0][t]) + 
+      M*Log[z^(-1)]*S0[t]^2*(20*(23*M^3 + (45*M)/z^2 - (135*M*\[Xi][t])/z + 
+          216*M*\[Xi][t]^2 + 54*Subscript[p, 2][t])*Derivative[1][S0][t]^2 + 
+        6*M*(247 - 45*Log[z^(-1)])*Derivative[2][S0][t]^2 + 
+        15*M*Derivative[1][S0][t]*(84*(z^(-1) - 4*\[Xi][t])*
+           Derivative[2][S0][t] + 47*Derivative[3][S0][t])) + 
+      5*S0[t]^3*((1080*SSub[z])/z^2 - (120*(-9 + M^2*z^2)*
+          Derivative[1][S0][t])/z^5 + M*Log[z^(-1)]*
+         (4*(28*M^3 + (45*M)/z^2 - (135*M*\[Xi][t])/z + 216*M*\[Xi][t]^2 + 
+            54*Subscript[p, 2][t])*Derivative[2][S0][t] + 
+          144*M*(z^(-1) - 4*\[Xi][t])*Derivative[3][S0][t] + 
+          75*M*Derivative[4][S0][t]))) + 
+    (90*S0[t]*(30*S0[t]^3*(-3 + M^2*z^2 - 6*z*\[Xi][t] - 3*z^2*\[Xi][t]^2) - 
+       30*M^2*z^5*Log[z^(-1)]*Derivative[1][S0][t]^3 - 
+       9*z^2*S0[t]*Derivative[1][S0][t]*
+        (5*(2 - M^2*z^2*Log[z^(-1)] + 2*M^2*z^3*Log[z^(-1)]*\[Xi][t])*
+          Derivative[1][S0][t] - 6*M^2*z^3*Log[z^(-1)]*Derivative[2][S0][
+           t]) + S0[t]^2*(20*z*(-9 + 2*M^2*z^2 - 9*z*\[Xi][t])*
+          Derivative[1][S0][t] + 3*M^2*z^4*Log[z^(-1)]*
+          (5*(-1 + 2*z*\[Xi][t])*Derivative[2][S0][t] - 
+           4*z*Derivative[3][S0][t])))*
+      (1800*S0[t]^4*(-3 - M^2*z^2 + 2*M^2*z^3*\[Xi][t]) - 
+       3*M^2*z^6*(199 - 1175*Log[z^(-1)] + 450*Log[z^(-1)]^2)*
+        Derivative[1][S0][t]^4 + 9*M^2*z^5*S0[t]*Derivative[1][S0][t]^2*
+        (100*(1 - 4*Log[z^(-1)] + 4*z*(-1 + 5*Log[z^(-1)])*\[Xi][t])*
+          Derivative[1][S0][t] - 3*z*(-53 + 225*Log[z^(-1)] + 
+           100*Log[z^(-1)]^2)*Derivative[2][S0][t]) + 
+       M*z^4*S0[t]^2*(20*(M*(-45 - 23*M^2*z^2 + 5*(27 + 23*M^2*z^2)*
+              Log[z^(-1)]) - 135*M*z*(-1 + 4*Log[z^(-1)])*\[Xi][t] + 
+           216*M*z^2*(-1 + 5*Log[z^(-1)])*\[Xi][t]^2 + 
+           54*z^2*(-1 + 5*Log[z^(-1)])*Subscript[p, 2][t])*
+          Derivative[1][S0][t]^2 - 6*M*z^2*(247 - 1325*Log[z^(-1)] + 
+           225*Log[z^(-1)]^2)*Derivative[2][S0][t]^2 - 
+         15*M*z*Derivative[1][S0][t]*(84*(1 - 4*Log[z^(-1)] + 
+             4*z*(-1 + 5*Log[z^(-1)])*\[Xi][t])*Derivative[2][S0][t] + 
+           47*z*(1 - 5*Log[z^(-1)])*Derivative[3][S0][t])) + 
+       5*z^3*S0[t]^3*(3240*z*SSub[z] - 240*M^2*Derivative[1][S0][t] + 
+         z*(1080*z*Derivative[1][SSub][z] + 
+           M*(4*(M*(-45 - 28*M^2*z^2 + 5*(27 + 28*M^2*z^2)*Log[z^(-1)]) - 135*
+                M*z*(-1 + 4*Log[z^(-1)])*\[Xi][t] + 216*M*z^2*
+                (-1 + 5*Log[z^(-1)])*\[Xi][t]^2 + 54*z^2*(-1 + 5*Log[z^(-1)])*
+                Subscript[p, 2][t])*Derivative[2][S0][t] + 
+             3*M*z*(-48*(1 - 4*Log[z^(-1)] + 4*z*(-1 + 5*Log[z^(-1)])*
+                  \[Xi][t])*Derivative[3][S0][t] + 25*z*(-1 + 5*Log[z^(-1)])*
+                Derivative[4][S0][t]))))))/
+     (1800*S0[t]^4*(3 - M^2*z^2 + z*(3 + M^2*z^2)*\[Xi][t]) + 
+      3*M^2*z^6*(199 - 90*Log[z^(-1)])*Log[z^(-1)]*Derivative[1][S0][t]^4 - 
+      9*M^2*z^5*Log[z^(-1)]*S0[t]*Derivative[1][S0][t]^2*
+       (-100*(-1 + 4*z*\[Xi][t])*Derivative[1][S0][t] + 
+        3*z*(53 + 20*Log[z^(-1)])*Derivative[2][S0][t]) + 
+      M*z^4*Log[z^(-1)]*S0[t]^2*(20*(45*M + 23*M^3*z^2 - 135*M*z*\[Xi][t] + 
+          216*M*z^2*\[Xi][t]^2 + 54*z^2*Subscript[p, 2][t])*
+         Derivative[1][S0][t]^2 + 6*M*z^2*(247 - 45*Log[z^(-1)])*
+         Derivative[2][S0][t]^2 - 15*M*z*Derivative[1][S0][t]*
+         (84*(-1 + 4*z*\[Xi][t])*Derivative[2][S0][t] - 
+          47*z*Derivative[3][S0][t])) + 5*S0[t]^3*(1080*z^4*SSub[z] - 
+        120*z*(-9 + M^2*z^2)*Derivative[1][S0][t] + M*z^4*Log[z^(-1)]*
+         (4*(45*M + 28*M^3*z^2 - 135*M*z*\[Xi][t] + 216*M*z^2*\[Xi][t]^2 + 
+            54*z^2*Subscript[p, 2][t])*Derivative[2][S0][t] + 
+          3*M*z*(-48*(-1 + 4*z*\[Xi][t])*Derivative[3][S0][t] + 
+            25*z*Derivative[4][S0][t])))))/(z^5*S0[t]^3), 
+ (2*(1800*S0[t]^4*(-2*M^2*z + 3*(1 + M^2*z^2)*\[Xi][t]) - 
+    3*M^2*z^5*(199 - 1374*Log[z^(-1)] + 540*Log[z^(-1)]^2)*
+     Derivative[1][S0][t]^4 + 9*M^2*z^4*S0[t]*Derivative[1][S0][t]^2*
+     (100*(1 - 5*Log[z^(-1)] + 4*z*(-1 + 6*Log[z^(-1)])*\[Xi][t])*
+       Derivative[1][S0][t] - 3*z*(-53 + 278*Log[z^(-1)] + 120*Log[z^(-1)]^2)*
+       Derivative[2][S0][t]) + M*z^3*S0[t]^2*
+     (20*(M*(-45 - 23*M^2*z^2 + 6*(30 + 23*M^2*z^2)*Log[z^(-1)]) - 
+        135*M*z*(-1 + 5*Log[z^(-1)])*\[Xi][t] + 
+        216*M*z^2*(-1 + 6*Log[z^(-1)])*\[Xi][t]^2 + 
+        54*z^2*(-1 + 6*Log[z^(-1)])*Subscript[p, 2][t])*
+       Derivative[1][S0][t]^2 - 6*M*z^2*(247 - 1572*Log[z^(-1)] + 
+        270*Log[z^(-1)]^2)*Derivative[2][S0][t]^2 - 
+      15*M*z*Derivative[1][S0][t]*(84*(1 - 5*Log[z^(-1)] + 
+          4*z*(-1 + 6*Log[z^(-1)])*\[Xi][t])*Derivative[2][S0][t] + 
+        47*z*(1 - 6*Log[z^(-1)])*Derivative[3][S0][t])) + 
+    5*S0[t]^3*(4320*z^3*SSub[z] - 360*(-3 + M^2*z^2)*Derivative[1][S0][t] + 
+      z^3*(1080*z*Derivative[1][SSub][z] + 
+        M*(4*(M*(-45 - 28*M^2*z^2 + 12*(15 + 14*M^2*z^2)*Log[z^(-1)]) - 
+            135*M*z*(-1 + 5*Log[z^(-1)])*\[Xi][t] + 216*M*z^2*
+             (-1 + 6*Log[z^(-1)])*\[Xi][t]^2 + 54*z^2*(-1 + 6*Log[z^(-1)])*
+             Subscript[p, 2][t])*Derivative[2][S0][t] + 
+          3*M*z*(-48*(1 - 5*Log[z^(-1)] + 4*z*(-1 + 6*Log[z^(-1)])*\[Xi][t])*
+             Derivative[3][S0][t] + 25*z*(-1 + 6*Log[z^(-1)])*
+             Derivative[4][S0][t]))))))/
+  (1800*S0[t]^4*(3 - M^2*z^2 + z*(3 + M^2*z^2)*\[Xi][t]) + 
+   3*M^2*z^6*(199 - 90*Log[z^(-1)])*Log[z^(-1)]*Derivative[1][S0][t]^4 - 
+   9*M^2*z^5*Log[z^(-1)]*S0[t]*Derivative[1][S0][t]^2*
+    (-100*(-1 + 4*z*\[Xi][t])*Derivative[1][S0][t] + 
+     3*z*(53 + 20*Log[z^(-1)])*Derivative[2][S0][t]) + 
+   M*z^4*Log[z^(-1)]*S0[t]^2*(20*(45*M + 23*M^3*z^2 - 135*M*z*\[Xi][t] + 
+       216*M*z^2*\[Xi][t]^2 + 54*z^2*Subscript[p, 2][t])*
+      Derivative[1][S0][t]^2 + 6*M*z^2*(247 - 45*Log[z^(-1)])*
+      Derivative[2][S0][t]^2 - 15*M*z*Derivative[1][S0][t]*
+      (84*(-1 + 4*z*\[Xi][t])*Derivative[2][S0][t] - 
+       47*z*Derivative[3][S0][t])) + 
+   5*S0[t]^3*(1080*z^4*SSub[z] - 120*z*(-9 + M^2*z^2)*Derivative[1][S0][t] + 
+     M*z^4*Log[z^(-1)]*(4*(45*M + 28*M^3*z^2 - 135*M*z*\[Xi][t] + 
+         216*M*z^2*\[Xi][t]^2 + 54*z^2*Subscript[p, 2][t])*
+        Derivative[2][S0][t] + 3*M*z*(-48*(-1 + 4*z*\[Xi][t])*
+          Derivative[3][S0][t] + 25*z*Derivative[4][S0][t])))), 1, 0}

@@ -1,3 +1,5 @@
+using LinearAlgebra
+
 function chebgrid(start, stop, length)
     # Compute a Chebyshev-spaced grid for arbitrary endpoints
     # x - grid between -1 and 1. y - desired grid. y = alpha*x + beta.
@@ -53,6 +55,67 @@ function cheb(start, stop, length)
     return([mat, grid]);
 end;
 
+function finitegrid(start, stop, length)
+    return range(T(start), T(stop), length)
+end
+
+function fd_weights_first(offsets)
+    n = length(offsets)
+    A = zeros(T, n, n)
+    b = zeros(T, n)
+
+    # Vandermonde system enforcing polynomial exactness
+    for k in 0:n-1
+        A[k+1, :] .= offsets .^ k
+    end
+
+    b[2] = 1.0   # first derivative of x at 0 is 1
+
+    return A \ b
+end
+
+
+function finitemat(grid::AbstractVector{T}; order = 4)
+    @assert iseven(order) "order must be even"
+
+    r = order ÷ 2; 
+    N = length(grid);
+    Dmat = zeros(T, N,N);
+    h = grid[2] - grid[1]; #Assuming uniform grid.
+
+
+    for i in 1:N
+        if i <= r
+            #Near left boundary
+            offsets = -(i-1):(order - (i - 1))
+            cols = 1:(order+1);
+        elseif i > N - r
+            offsets = -(order - (N - i)):(N - i)
+            cols = (N - order):N
+
+        else
+            offsets = -r:r
+            cols = (i-r):(i+r);
+        end
+
+        w = fd_weights_first(collect(offsets)) ./ h
+        Dmat[i, cols] .= w
+
+    end
+
+    return Dmat
+end
+
+function finitediff(start, stop, length, OrderDiff)
+
+    grid =finitegrid(start, stop, length);
+    mat = finitemat(grid; order = OrderDiff)
+
+    return([mat, grid])
+
+end
+
+
 function MultiGridChebyshev(start, stop, Ndom, Npts)
     #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
     
@@ -78,11 +141,10 @@ function MultiGridChebyshev(start, stop, Ndom, Npts)
 end
 
 function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
-    #Set up a multidomain grid, all Ndom domains have the same number of points Npts and the same length - could generalize that.
     Ndom = length(endpoints)-1;
     if !(Ndom == length(lengths))
-        prtinln("Mismatched arrays!!");
-        return 0
+        println("Mismatched arrays!!");
+        return 1
     end
 
     allmats = [];
@@ -106,3 +168,40 @@ function MultiGridChebyshev(endpoints::Vector{T}, lengths::Vector{Int64})
 
     return allmats2, allmats, grids, dampmats
 end;
+
+function MultiGridMultiMethod(endpoints::Vector{T}, lengths::Vector{Int64}, orders::Vector{Int64})
+    Ndom = length(endpoints) - 1;
+    @assert (Ndom == length(lengths)) "Mismatched arrays!"
+
+    allmats = [];
+    allmats2 = [];
+    dampmats = [];
+    grids = [];
+
+    for ii in 1:Ndom
+        loc_start = endpoints[ii];
+        loc_stop = endpoints[ii+1];
+        Npts = lengths[ii];
+
+        DM1 = zeros(T, Npts, Npts);
+        grid1 = zeros(T, Npts);
+
+        if orders[ii] == 0
+            DM1, grid1 = cheb(loc_start, loc_stop, Npts)
+        else
+            DM1, grid1 = finitediff(loc_start, loc_stop, Npts, orders[ii])
+        end
+
+        DM2 = DM1*DM1;
+
+        push!(allmats, DM1);
+        push!(allmats2, DM2);
+        push!(dampmats, DM2*DM2);
+        push!(grids, grid1);
+    end
+
+    return allmats2, allmats, grids, dampmats
+
+end
+
+
